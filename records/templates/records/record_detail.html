@@ -1,10 +1,10 @@
 {% extends "base.html" %} {% block content %}
 <h1 class="text-2xl">{{ record.name }}</h1>
 <p>{{ record.detail }}</p>
-<p><strong>Loan Amount:</strong> {{ record.loan_amount }}</p>
-<p><strong>Accrued Interest:</strong> {{ accrued_interest }}</p>
-<p><strong>Total Due:</strong> {{ total_due }}</p>
-<p><strong>Remaining Loan:</strong> {{ remaining_loan }}</p>
+<p><strong>Loan Amount:</strong> {{ record.loan_amount }} ฿</p>
+<p><strong>Accrued Interest:</strong> {{ accrued_interest }} ฿</p>
+<p><strong>Total Due:</strong> {{ total_due }} ฿</p>
+<p><strong>Remaining Loan:</strong> {{ remaining_loan }} ฿</p>
 <p><strong>Start Date:</strong> {{ record.start_date }}</p>
 <p><strong>End Date:</strong> {{ record.end_date }}</p>
 <p>

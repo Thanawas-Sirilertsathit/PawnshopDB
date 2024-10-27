@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from datetime import timedelta
 from django.db.models import Sum
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Record(models.Model):
@@ -15,9 +16,15 @@ class Record(models.Model):
     detail = models.CharField(max_length=1024)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now() + timedelta(days=365))
-    loan_amount = models.IntegerField(null=False, blank=False)
+    loan_amount = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0)])
     active = models.BooleanField(default=True)
-    interest_rate = models.FloatField(default=0.05)
+    interest_rate = models.FloatField(
+        default=5,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100)
+        ]
+    )
 
     def __str__(self) -> Any:
         """Return Record Name Name as string representative.
@@ -55,8 +62,9 @@ class Record(models.Model):
         """
         # Calculate the number of full months since the loan start
         months_elapsed = math.floor((timezone.now() - self.start_date).days / 30)
-        # 5% interest per month
-        return int(self.loan_amount * self.interest_rate * months_elapsed)
+        # add interest per month
+        interest = self.interest_rate/100
+        return int(self.loan_amount * interest * months_elapsed)
 
     def total_due(self) -> int:
         """Calculate the total amount due (loan amount + accrued interest).

@@ -1,7 +1,7 @@
 from django.urls import path
-
-from . import views
+from .views import RecordIndex, RecordDetail
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path('', RecordIndex.as_view(), name='index'),
+    path('<int:pk>/', RecordDetail.as_view(), name='record_detail'),
 ]

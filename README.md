@@ -1,2 +1,2 @@
-# PawnshopDB : A data amangement web app
+# PawnshopDB : A data management web app
 A web application for managing pawnshop records, items and transactions.

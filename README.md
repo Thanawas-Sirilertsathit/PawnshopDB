@@ -37,22 +37,37 @@ A web application for managing pawnshop records, items and transactions powered 
 
 -   This will tell you about your path to npm file. Put it in `PATH_TO_NPM`.
 
-6. Install tailwind
+6. Install daisy UI
+
+-   Move to static_src directory
+
+```bash
+cd theme/
+cd static_src/
+```
+
+-   Install daisy UI
+
+```bash
+npm i -D daisyui@latest
+```
+
+7. Install tailwind
 
     ```bash
     python manage.py tailwind install
 
     ```
 
-7. Follow MySQL [installation & set up guide](./database_guide.md)
+8. Follow MySQL [installation & set up guide](./database_guide.md)
 
-8. Migrate Django database
+9. Migrate Django database
 
     ```bash
     python manage.py migrate
     ```
 
-9. Run server
+10. Run server
     ```bash
     python manage.py runserver
     ```

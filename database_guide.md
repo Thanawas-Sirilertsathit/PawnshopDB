@@ -43,7 +43,7 @@
 
 ## Configure environments.
 
--   In [sample.env](./sample.env)
+-   In [sample.env](./sample.env) copy to `.env` and edit in `.env`.
 
     ```
     # MySQL configuration

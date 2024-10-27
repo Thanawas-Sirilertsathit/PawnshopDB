@@ -4,8 +4,7 @@
     {% for record in records %}
     <li>
         <a href="{% url 'record_detail' record.pk %}">{{ record.name }}</a>
-        - Loan Amount: {{ record.loan_amount }} - End Date: {{ record.end_date
-        }}
+        - Loan Amount: {{ record.loan_amount }} - End Date: {{ record.end_date}}
     </li>
     {% endfor %}
 </ul>

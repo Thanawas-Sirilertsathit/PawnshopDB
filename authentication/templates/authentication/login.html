@@ -1,0 +1,53 @@
+{% load static tailwind_tags%}
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ request.COOKIES.theme|default:'light' }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login - Pawnshop DB</title>
+        {%tailwind_css%}
+    </head>
+    <body
+        class="flex items-center justify-center h-screen bg-neutral text-base-300"
+    >
+        <div class="card bg-secondary shadow-lg p-4">
+            <h2 class="text-2xl font-bold mb-4 text-center">
+                Login to Pawnshop DB
+            </h2>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="text-base-100">Username</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="username"
+                        class="input input-bordered text-primary w-full mb-4"
+                        required
+                    />
+                </div>
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="text-base-100">Password</span>
+                    </label>
+                    <input
+                        type="password"
+                        name="password"
+                        class="input input-bordered text-primary w-full"
+                        required
+                    />
+                </div>
+                <button type="submit" class="btn btn-primary w-full">
+                    Login
+                </button>
+            </form>
+            {% comment %}
+            <p class="text-center mt-4">
+                Don't have an account?
+                <a href="{% url 'signup' %}" class="text-primary">Sign up</a>
+            </p>
+            {% endcomment %}
+        </div>
+    </body>
+</html>

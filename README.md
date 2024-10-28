@@ -57,6 +57,8 @@ npm i -D daisyui@latest
     ```bash
     python manage.py tailwind install
 
+    python manage.py tailwind build
+
     ```
 
 8. Follow MySQL [installation & set up guide](./database_guide.md)

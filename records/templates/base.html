@@ -23,11 +23,25 @@
                             >Admin</a
                         >
                     </li>
+                    {% if user.is_authenticated %}
+                    <li>
+                        <span class="text-primary"
+                            >Welcome, {{ user.username }}!</span
+                        >
+                    </li>
+                    {% comment %}
+                    <li>
+                        <a href="{% url 'logout' %}" class="text-primary"
+                            >Logout</a
+                        >
+                    </li>
+                    {% endcomment %} {% else %}
                     <li>
                         <a href="{% url 'login' %}" class="text-primary"
                             >Login</a
                         >
                     </li>
+                    {% endif %}
                 </ul>
                 <button id="theme-toggle" class="btn btn-secondary">◐</button>
             </nav>

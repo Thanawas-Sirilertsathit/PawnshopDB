@@ -69,7 +69,13 @@ npm i -D daisyui@latest
     python manage.py migrate
     ```
 
-10. Run server
+10. Collect static_src
+
+    ```bash
+    python manage.py collectstatic
+    ```
+
+11. Run server
     ```bash
     python manage.py runserver
     ```

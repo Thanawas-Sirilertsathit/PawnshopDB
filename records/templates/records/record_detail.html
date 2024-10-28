@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %}
+<div class="card bg-secondary shadow-lg p-4">
+    <div class="card-body">
+        <h1 class="text-3xl text-primary-content mt-2">{{ record.name }}</h1>
+        <p class="text-gray-700 mt-2">{{ record.detail }}</p>
+        <p class="text-gray-700 mt-2">
+            <strong>Loan Amount:</strong> {{ record.loan_amount }} ฿
+        </p>
+        <p class="text-gray-700 mt-2">
+            <strong>Accrued Interest:</strong> {{ accrued_interest }} ฿
+        </p>
+        <p class="text-gray-700 mt-2">
+            <strong>Total Due:</strong> {{ total_due }} ฿
+        </p>
+        <p class="text-gray-700 mt-2">
+            <strong>Remaining Loan:</strong> {{ remaining_loan }} ฿
+        </p>
+        <p class="text-gray-700 mt-2">
+            <strong>Start Date:</strong> {{ record.start_date }}
+        </p>
+        <p class="text-gray-700 mt-2">
+            <strong>End Date:</strong> {{ record.end_date }}
+        </p>
+        <p class="text-gray-700 mt-2">
+            <strong>Status:</strong> {% if record.active %}Active{% else %}
+            Closed {%endif%}
+        </p>
+
+        <h2 class="text-gray-700 mt-2">Payment History</h2>
+        <ul class="text-gray-700 mt-2">
+            {% for payment in payments %}
+            <li>{{ payment.user.username }} - Paid: {{ payment.money }}</li>
+            {% empty %}
+            <li>No payments yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endblock %}
+</div>

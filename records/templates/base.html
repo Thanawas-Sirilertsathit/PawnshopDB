@@ -1,0 +1,54 @@
+{% load static tailwind_tags%}
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ request.COOKIES.theme|default:'my-light' }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}Pawnshop DB{% endblock %}</title>
+        {%tailwind_css%}
+    </head>
+    <body class="bg-primary">
+        <header class="bg-base-200 shadow">
+            <nav
+                class="container mx-auto p-4 flex justify-between items-center"
+            >
+                <ul class="flex space-x-4">
+                    <li>
+                        <a href="{% url 'index' %}" class="text-primary"
+                            >Home</a
+                        >
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:index' %}" class="text-primary"
+                            >Admin</a
+                        >
+                    </li>
+                </ul>
+                <button id="theme-toggle" class="btn btn-secondary">◐</button>
+            </nav>
+        </header>
+
+        <main class="container mx-auto p-4">
+            {% block content %}
+            <!-- Page-specific content goes here -->
+            {% endblock %}
+        </main>
+
+        <footer class="bg-base-100 p-4 text-center">
+            <p>Under development.</p>
+        </footer>
+
+        <script>
+            const themeToggle = document.getElementById("theme-toggle");
+            themeToggle.addEventListener("click", () => {
+                const currentTheme =
+                    document.documentElement.getAttribute("data-theme");
+                const newTheme =
+                    currentTheme === "my-dark" ? "my-light" : "my-dark";
+                document.documentElement.setAttribute("data-theme", newTheme);
+
+                document.cookie = "theme=" + newTheme + "; path=/";
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="text-3xl text-primary-content mb-4">Active Pawnshop Records</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for record in records %}
+    <div class="card bg-secondary shadow-lg p-4">
+        <div class="card-body">
+            <h2 class="text-2xl">{{ record.name }}</h2>
+            <p class="text-primary-content">
+                Loan Amount: {{ record.loan_amount }} ฿
+            </p>
+            <p class="text-primary-content">End Date: {{ record.end_date }}</p>
+            <div class="card-actions justify-end">
+                <a
+                    href="{% url 'record_detail' record.pk %}"
+                    class="btn btn-neutral hover:btn-primary"
+                    >View</a
+                >
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

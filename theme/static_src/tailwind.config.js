@@ -48,7 +48,7 @@ module.exports = {
         themes: [
             {
                 "my-light": {
-                    primary: "#f26b76",
+                    primary: "#f02929",
                     "primary-focus": "#f2776b",
                     "primary-content": "#000000",
 
@@ -92,12 +92,12 @@ module.exports = {
                     "primary-focus": "#376a2f",
                     "primary-content": "#ffffff",
 
-                    secondary: "#4da6db",
-                    "secondary-focus": "#2ca2db",
+                    secondary: "#db892d",
+                    "secondary-focus": "#db9344",
                     "secondary-content": "#ffffff",
 
-                    accent: "#d6b56b",
-                    "accent-focus": "#e3f080",
+                    accent: "#c96bef",
+                    "accent-focus": "#c96ff0",
                     "accent-content": "#ffffff",
 
                     neutral: "#2a2a37",

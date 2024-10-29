@@ -15,8 +15,10 @@ class Record(models.Model):
     name = models.CharField(max_length=255)
     detail = models.CharField(max_length=1024)
     start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField(default=timezone.now() + timedelta(days=365))
-    loan_amount = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0)])
+    end_date = models.DateTimeField(
+        default=timezone.now() + timedelta(days=365))
+    loan_amount = models.IntegerField(
+        null=False, blank=False, validators=[MinValueValidator(0)])
     active = models.BooleanField(default=True)
     interest_rate = models.FloatField(
         default=5,
@@ -40,7 +42,6 @@ class Record(models.Model):
         """
         return self.end_date >= timezone.now() and self.active
 
-
     def loan_staff(self) -> User:
         """Find user that is host of the loan (is_staff is True).
 
@@ -61,7 +62,8 @@ class Record(models.Model):
         :return: Total accrued interest
         """
         # Calculate the number of full months since the loan start
-        months_elapsed = math.floor((timezone.now() - self.start_date).days / 30)
+        months_elapsed = math.floor(
+            (timezone.now() - self.start_date).days / 30)
         # add interest per month
         interest = self.interest_rate/100
         return int(self.loan_amount * interest * months_elapsed)
@@ -78,7 +80,8 @@ class Record(models.Model):
 
         :return: Remaining loan amount
         """
-        total_payments = self.payment_set.aggregate(Sum('money'))['money__sum'] or 0
+        total_payments = self.payment_set.aggregate(Sum('money'))[
+            'money__sum'] or 0
         remaining_amount = self.total_due() - total_payments
 
         # Close the record if payment exceed or equal to requirement
@@ -86,7 +89,7 @@ class Record(models.Model):
             self.active = False
             self.save()
 
-        return max(remaining_amount, 0) 
+        return max(remaining_amount, 0)
 
 
 class LoanOffer(models.Model):
@@ -117,3 +120,16 @@ class Payment(models.Model):
         :return: user's username and the activity they've joined
         """
         return f"User {self.user.username} paid {self.money} for {self.record.name} record"
+
+
+class Pawnshop(models.Model):
+
+    name = models.CharField(max_length=255)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(
+        default=timezone.now() + timedelta(days=365))
+    loan_amount = models.IntegerField(
+        null=False, blank=False, validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return self.name

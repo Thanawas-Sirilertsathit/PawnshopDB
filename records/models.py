@@ -125,11 +125,7 @@ class Payment(models.Model):
 class Pawnshop(models.Model):
 
     name = models.CharField(max_length=255)
-    start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField(
-        default=timezone.now() + timedelta(days=365))
-    loan_amount = models.IntegerField(
-        null=False, blank=False, validators=[MinValueValidator(0)])
+    description = models.CharField(max_length=1024)
 
     def __str__(self):
-        return self.name
+        return f"User {self.user.username}"

@@ -57,6 +57,8 @@ npm i -D daisyui@latest
     ```bash
     python manage.py tailwind install
 
+    python manage.py tailwind build
+
     ```
 
 8. Follow MySQL [installation & set up guide](./database_guide.md)
@@ -67,7 +69,13 @@ npm i -D daisyui@latest
     python manage.py migrate
     ```
 
-10. Run server
+10. Collect static_src
+
+    ```bash
+    python manage.py collectstatic
+    ```
+
+11. Run server
     ```bash
     python manage.py runserver
     ```

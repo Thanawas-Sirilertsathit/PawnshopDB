@@ -35,19 +35,19 @@
         </main>
 
         <footer class="bg-base-100 p-4 text-center">
-            <p>Under development.</p>
+            <p>Powered by Trinity Pawnshop 2024</p>
         </footer>
 
         <script>
-            const themeToggle = document.getElementById("theme-toggle");
-            themeToggle.addEventListener("click", () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
                 const currentTheme =
-                    document.documentElement.getAttribute("data-theme");
+                    document.documentElement.getAttribute('data-theme');
                 const newTheme =
-                    currentTheme === "my-dark" ? "my-light" : "my-dark";
-                document.documentElement.setAttribute("data-theme", newTheme);
+                    currentTheme === 'my-dark' ? 'my-light' : 'my-dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
 
-                document.cookie = "theme=" + newTheme + "; path=/";
+                document.cookie = 'theme=' + newTheme + '; path=/';
             });
         </script>
     </body>

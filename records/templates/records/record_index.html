@@ -1,6 +1,22 @@
 {% extends "base.html" %} {% block content %}
-<h1 class="text-3xl text-primary-content mb-4">Active Pawnshop Records</h1>
+<h1 class="text-3xl text-primary-content mb-4">
+    Active Pawnshop Records in {{pawnshop.name}}
+</h1>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
+        <div class="card-body text-center">
+            <h2 class="text-3xl text-white">+</h2>
+            <p class="text-white">Create New Record</p>
+            <div class="card-actions justify-center">
+                <a
+                    href="{% url 'create_record' pawnshop_id=pawnshop.id%}"
+                    class="btn btn-primary"
+                >
+                    Create
+                </a>
+            </div>
+        </div>
+    </div>
     {% for record in records %}
     <div class="card bg-secondary shadow-lg p-4">
         <div class="card-body">
@@ -11,7 +27,7 @@
             <p class="text-primary-content">End Date: {{ record.end_date }}</p>
             <div class="card-actions justify-end">
                 <a
-                    href="{% url 'record_detail' record.pk %}"
+                    href="{% url 'record_detail' pawnshop_id=record.pawnshop.id record_id=record.id %}"
                     class="btn btn-neutral hover:btn-primary"
                     >View</a
                 >

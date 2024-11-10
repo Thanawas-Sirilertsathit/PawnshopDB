@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="text-3xl text-primary-content mb-4">Pawnshop list</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for pawnshop in pawnshops %}
+    <div class="card bg-secondary shadow-lg p-4">
+        <div class="card-body">
+            <h2 class="text-2xl">{{ pawnshop.name }}</h2>
+            <p class="text-primary-content">{{pawnshop.description}}</p>
+            <div class="card-actions justify-end">
+                <a
+                    href="{% url 'record_index' pawnshop_id=pawnshop.id %}"
+                    class="btn btn-neutral hover:btn-primary"
+                    >View</a
+                >
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
+        <div class="card-body text-center">
+            <h2 class="text-3xl text-white">+</h2>
+            <p class="text-white">Create New Pawnshop</p>
+            <div class="card-actions justify-center">
+                <a href="{% url 'create_pawnshop' %}" class="btn btn-primary">
+                    Create
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>

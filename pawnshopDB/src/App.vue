@@ -1,47 +1,35 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <NavBar>
+        <router-view />
+        <div class="z-50 fixed bottom-1 right-0 w-2/5">
+            <AlertToast
+                v-for="(alert, index) in alerts"
+                class="text-ms justify-start h-auto"
+                style="margin-top: 0.25rem"
+                :key="index"
+                :content="alert.content"
+                :type="alert.type"
+                :isVisible="alert.isVisible"
+                @update:isVisible="hideAlert(index)"
+            />
+        </div>
+    </NavBar>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
+<script setup>
+import { useAlert } from '@/functions/AlertManager';
+import AlertToast from '@/component/AlertToast.vue';
+import { authStatus } from '@/functions/Authentications';
+import NavBar from '@/component/NavBar.vue';
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+const { alerts } = useAlert();
+</script>
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+<script>
+export default {
+    name: 'App',
+    mounted() {
+        authStatus();
+    },
+};
+</script>

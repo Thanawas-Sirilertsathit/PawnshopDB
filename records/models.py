@@ -8,6 +8,10 @@ from datetime import timedelta
 from django.db.models import Sum
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+def next_year():
+    """Get the time of next year."""
+    return timezone.now() + timedelta(days=365)
+
 
 class Record(models.Model):
     """Pawnshop record model to store data."""
@@ -16,7 +20,7 @@ class Record(models.Model):
     detail = models.CharField(max_length=1024)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(
-        default=timezone.now() + timedelta(days=365))
+        default=next_year)
     loan_amount = models.IntegerField(
         null=False, blank=False, validators=[MinValueValidator(0)])
     active = models.BooleanField(default=True)
@@ -123,10 +127,10 @@ class Payment(models.Model):
 
 
 class Pawnshop(models.Model):
-
+    """Pawnshop model to store records."""
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=1024)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"User {self.user.username}"
+        """String to represent the pawnshop."""
+        return f"Pawnshop: {self.name}"

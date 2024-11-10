@@ -8,6 +8,7 @@ from datetime import timedelta
 from django.db.models import Sum
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 def next_year():
     """Get the time of next year."""
     return timezone.now() + timedelta(days=365)

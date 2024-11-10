@@ -1,6 +1,18 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from .models import Record, Payment
+from django.http import HttpRequest
+from django.middleware.csrf import get_token
+from django.shortcuts import get_object_or_404
+from rest_framework import decorators, response
+
+
+@decorators.api_view(['get'])
+def csrf_token_view(request: HttpRequest) -> response.Response:  # pragma: no cover
+    """Return csrf token."""
+    csrf_token = get_token(request)
+    return response.Response({'csrfToken': csrf_token})
+
 
 class RecordIndex(View):
     """View to display a list of active records."""

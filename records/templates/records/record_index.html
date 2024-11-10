@@ -11,7 +11,7 @@
             <p class="text-primary-content">End Date: {{ record.end_date }}</p>
             <div class="card-actions justify-end">
                 <a
-                    href="{% url 'record_detail' record.pk %}"
+                    href="{% url 'record_detail' pawnshop_id=record.pawnshop.id record_id=record.id %}"
                     class="btn btn-neutral hover:btn-primary"
                     >View</a
                 >

@@ -1,4 +1,4 @@
-"""Database Model for activities app."""
+"""Database Model for pawnshop app."""
 import math
 from typing import Any
 from django.db import models
@@ -14,11 +14,22 @@ def next_year():
     return timezone.now() + timedelta(days=365)
 
 
+class Pawnshop(models.Model):
+    """Pawnshop model to store records."""
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=1024)
+
+    def __str__(self):
+        """String to represent the pawnshop."""
+        return f"Pawnshop: {self.name}"
+
+
 class Record(models.Model):
     """Pawnshop record model to store data."""
 
     name = models.CharField(max_length=255)
     detail = models.CharField(max_length=1024)
+    pawnshop = models.ForeignKey(Pawnshop, on_delete=models.CASCADE)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(
         default=next_year)
@@ -125,13 +136,3 @@ class Payment(models.Model):
         :return: user's username and the activity they've joined
         """
         return f"User {self.user.username} paid {self.money} for {self.record.name} record"
-
-
-class Pawnshop(models.Model):
-    """Pawnshop model to store records."""
-    name = models.CharField(max_length=255)
-    description = models.CharField(max_length=1024)
-
-    def __str__(self):
-        """String to represent the pawnshop."""
-        return f"Pawnshop: {self.name}"

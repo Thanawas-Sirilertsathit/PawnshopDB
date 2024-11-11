@@ -60,7 +60,7 @@
             id="start-date"
             name="start_date"
             value="{{ form.start_date.value|date:'Y-m-d'}}"
-            class="input input-bordered w-min bg-neutral text-primary-content"
+            class="input input-bordered w-min bg-neutral text-primary"
             placeholder="Select Start Date"
         />
     </div>
@@ -76,7 +76,7 @@
             id="end-date"
             name="end_date"
             value="{{form.end_date.value|date:'Y-m-d'}}"
-            class="input input-bordered w-min bg-neutral text-primary-content"
+            class="input input-bordered w-min bg-neutral text-primary"
             placeholder="Select End Date"
         />
     </div>
@@ -94,7 +94,7 @@
             min="0"
             step="1"
             value="{{ form.loan_amount.value|default:'' }}"
-            class="input input-bordered w-min bg-neutral text-primary-content"
+            class="input input-bordered w-min bg-neutral text-primary"
             placeholder="Enter Loan Amount"
         />
     </div>
@@ -113,7 +113,7 @@
             max="100"
             step="0.1"
             value="{{ form.interest_rate.value|default:5 }}"
-            class="input input-bordered w-min bg-neutral text-primary-content"
+            class="input input-bordered w-min bg-neutral text-primary"
             placeholder="Enter Interest Rate"
         />
     </div>
@@ -147,6 +147,41 @@
         altFormat: 'F j, Y',
         allowInput: true,
         disableMobile: 'true',
+    });
+</script>
+<script>
+    const themes = [
+        'my-light',
+        'my-dark',
+        'my-candy',
+        'my-sea',
+        'my-desert',
+        'my-magic',
+    ];
+    let themeIndex = 0;
+
+    function switchTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        const newTheme = themes[themeIndex];
+        document.documentElement.setAttribute('data-theme', newTheme);
+        document.cookie = 'theme=' + newTheme + '; path=/';
+    }
+    const nameInput = document.getElementById('id_name');
+    const detailInput = document.getElementById('id_detail');
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    const loanInput = document.getElementById('id_loan_amount');
+    const interestInput = document.getElementById('id_interest_rate');
+
+    [
+        nameInput,
+        detailInput,
+        startDateInput,
+        endDateInput,
+        loanInput,
+        interestInput,
+    ].forEach((input) => {
+        input.addEventListener('input', switchTheme);
     });
 </script>
 {% endblock %}

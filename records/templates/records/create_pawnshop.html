@@ -77,5 +77,29 @@
         </button>
     </div>
 </form>
+<script>
+    const themes = [
+        'my-light',
+        'my-dark',
+        'my-candy',
+        'my-sea',
+        'my-desert',
+        'my-magic',
+    ];
+    let themeIndex = 0;
 
+    function switchTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        const newTheme = themes[themeIndex];
+        document.documentElement.setAttribute('data-theme', newTheme);
+        document.cookie = 'theme=' + newTheme + '; path=/';
+    }
+
+    const nameInput = document.getElementById('id_name');
+    const descriptionInput = document.getElementById('id_description');
+
+    [nameInput, descriptionInput].forEach((input) => {
+        input.addEventListener('input', switchTheme);
+    });
+</script>
 {% endblock %}

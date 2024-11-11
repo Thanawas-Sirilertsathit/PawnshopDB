@@ -24,7 +24,9 @@
             <p class="text-primary-content">
                 Loan Amount: {{ record.loan_amount }} ฿
             </p>
-            <p class="text-primary-content">End Date: {{ record.end_date }}</p>
+            <p class="text-primary-content">
+                End Date: {{ record.end_date|date:"D. M. jS Y" }}
+            </p>
             <div class="card-actions justify-end">
                 <a
                     href="{% url 'record_detail' pawnshop_id=record.pawnshop.id record_id=record.id %}"

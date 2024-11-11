@@ -16,10 +16,12 @@
             <strong>Remaining Loan:</strong> {{ remaining_loan }} ฿
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>Start Date:</strong> {{ record.start_date|date:"M jS, Y" }}
+            <strong>Start Date:</strong>
+            {{ record.start_date|date:"D. M. jS Y"}}
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>End Date:</strong> {{ record.end_date|date:"M jS, Y" }}
+            <strong>End Date:</strong>
+            {{ record.end_date|date:"D. M. jS Y" }}
         </p>
         <p class="text-gray-700 mt-2">
             <strong>Status:</strong> {% if record.active %}Active

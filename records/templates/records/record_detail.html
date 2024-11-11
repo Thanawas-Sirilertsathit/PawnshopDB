@@ -22,8 +22,8 @@
             <strong>End Date:</strong> {{ record.end_date|date:"M jS, Y" }}
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>Status:</strong> {% if record.active %}Active{% else
-            %}Closed{% endif %}
+            <strong>Status:</strong> {% if record.active %}Active
+            {%else%}Closed{% endif %}
         </p>
 
         <h2 class="text-gray-700 mt-2">Payment History</h2>
@@ -36,7 +36,7 @@
         </ul>
         <div class="card-actions justify-start my-2">
             <a
-                href="{% url 'index' %}"
+                href="{% url 'record_index' pawnshop_id=record.pawnshop.id %}"
                 class="btn btn-neutral hover:btn-primary"
                 >Back to {{ record.pawnshop.name }}</a
             >

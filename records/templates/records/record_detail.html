@@ -16,14 +16,16 @@
             <strong>Remaining Loan:</strong> {{ remaining_loan }} ฿
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>Start Date:</strong> {{ record.start_date }}
+            <strong>Start Date:</strong>
+            {{ record.start_date|date:"D. M. jS Y"}}
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>End Date:</strong> {{ record.end_date }}
+            <strong>End Date:</strong>
+            {{ record.end_date|date:"D. M. jS Y" }}
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>Status:</strong> {% if record.active %}Active{% else %}
-            Closed {%endif%}
+            <strong>Status:</strong> {% if record.active %}Active
+            {%else%}Closed{% endif %}
         </p>
 
         <h2 class="text-gray-700 mt-2">Payment History</h2>
@@ -35,8 +37,10 @@
             {% endfor %}
         </ul>
         <div class="card-actions justify-start my-2">
-            <a href="{% url 'index'%}" class="btn btn-neutral hover:btn-primary"
-                >Back to {{record.pawnshop.name}}</a
+            <a
+                href="{% url 'record_index' pawnshop_id=record.pawnshop.id %}"
+                class="btn btn-neutral hover:btn-primary"
+                >Back to {{ record.pawnshop.name }}</a
             >
         </div>
     </div>

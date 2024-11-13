@@ -40,11 +40,20 @@
 
         <script>
             const themeToggle = document.getElementById('theme-toggle');
+            const theme = [
+                'my-dark',
+                'my-light',
+                'my-candy',
+                'my-sea',
+                'my-desert',
+                'my-magic',
+            ];
+            let currentThemeIndex = 0;
             themeToggle.addEventListener('click', () => {
                 const currentTheme =
                     document.documentElement.getAttribute('data-theme');
-                const newTheme =
-                    currentTheme === 'my-dark' ? 'my-light' : 'my-dark';
+                currentThemeIndex = (currentThemeIndex + 1) % theme.length;
+                const newTheme = theme[currentThemeIndex];
                 document.documentElement.setAttribute('data-theme', newTheme);
 
                 document.cookie = 'theme=' + newTheme + '; path=/';

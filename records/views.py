@@ -5,15 +5,21 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
+from django.db.models import Q
 
 
 class PawnshopListView(View):
     """Class-based view to list all pawnshops."""
 
     def get(self, request):
-        """Get all pawnshops."""
-        active_records = Pawnshop.objects.all()
-        return render(request, 'records/pawnshop_list.html', {'pawnshops': active_records})
+        """Get all pawnshops, with optional search filtering."""
+        query = request.GET.get('q')
+        if query:
+            pawnshops = Pawnshop.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+        else:
+            pawnshops = Pawnshop.objects.all()
+        context = {'pawnshops': pawnshops,'query': query}
+        return render(request, 'records/pawnshop_list.html', context)
 
 
 class CreatePawnshopView(View):
@@ -40,11 +46,16 @@ class RecordIndex(View):
     def get(self, request, pawnshop_id):
         """Get all records in this pawnshop."""
         pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+        query = request.GET.get('q')
         active_records = Record.objects.filter(pawnshop=pawnshop, active=True)
-        
+        if query:
+            active_records = active_records.filter(
+                Q(name__icontains=query) | Q(detail__icontains=query)
+            )
         context = {
             'pawnshop': pawnshop,
-            'records': active_records
+            'records': active_records,
+            'query': query
         }
         return render(request, 'records/record_index.html', context)
 

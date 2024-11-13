@@ -31,7 +31,7 @@
             type="text"
             id="id_name"
             name="name"
-            class="input input-bordered block w-full rounded-xl-important text-primary p-4 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            class="input input-bordered bg-neutral block w-full rounded-xl-important text-primary p-4 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             value="{{ form.name.value|default_if_none:'' }}"
             placeholder="Enter pawnshop name"
         />
@@ -53,7 +53,7 @@
         <textarea
             id="id_description"
             name="description"
-            class="input input-bordered text-primary w-full p-4 rounded-xl-important border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            class="input input-bordered bg-neutral text-primary w-full p-4 rounded-xl-important border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             rows="4"
             placeholder="Enter pawnshop description"
         >
@@ -77,5 +77,29 @@
         </button>
     </div>
 </form>
+<script>
+    const themes = [
+        'my-light',
+        'my-dark',
+        'my-candy',
+        'my-sea',
+        'my-desert',
+        'my-magic',
+    ];
+    let themeIndex = 0;
 
+    function switchTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        const newTheme = themes[themeIndex];
+        document.documentElement.setAttribute('data-theme', newTheme);
+        document.cookie = 'theme=' + newTheme + '; path=/';
+    }
+
+    const nameInput = document.getElementById('id_name');
+    const descriptionInput = document.getElementById('id_description');
+
+    [nameInput, descriptionInput].forEach((input) => {
+        input.addEventListener('input', switchTheme);
+    });
+</script>
 {% endblock %}

@@ -1,5 +1,21 @@
 {% extends "base.html" %} {% block content %}
-<h1 class="text-3xl text-primary-content mb-4">Pawnshop list</h1>
+<div class="flex items-center justify-between mb-4">
+    <h1 class="text-3xl text-primary-content">Pawnshop List</h1>
+    <form
+        method="get"
+        action="{% url 'index' %}"
+        class="flex items-center space-x-2 max-w-screen"
+    >
+        <input
+            type="text"
+            name="q"
+            value="{{ query|default:'' }}"
+            placeholder="Search pawnshops"
+            class="input input-bordered bg-neutral text-primary w-full"
+        />
+        <button type="submit" class="btn btn-accent">Search</button>
+    </form>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {% for pawnshop in pawnshops %}
     <div class="card bg-secondary shadow-lg p-4">

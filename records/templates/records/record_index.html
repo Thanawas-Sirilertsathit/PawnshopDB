@@ -1,41 +1,60 @@
 {% extends "base.html" %} {% block content %}
-<h1 class="text-3xl text-primary-content mb-4">
-    Active Pawnshop Records in {{pawnshop.name}}
-</h1>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
-        <div class="card-body text-center">
-            <h2 class="text-3xl text-white">+</h2>
-            <p class="text-white">Create New Record</p>
-            <div class="card-actions justify-center">
-                <a
-                    href="{% url 'create_record' pawnshop_id=pawnshop.id%}"
-                    class="btn btn-primary"
-                >
-                    Create
-                </a>
-            </div>
-        </div>
-    </div>
-    {% for record in records %}
-    <div class="card bg-secondary shadow-lg p-4">
-        <div class="card-body">
-            <h2 class="text-2xl">{{ record.name }}</h2>
-            <p class="text-primary-content">
-                Loan Amount: {{ record.loan_amount }} ฿
-            </p>
-            <p class="text-primary-content">
-                End Date: {{ record.end_date|date:"D. M. jS Y" }}
-            </p>
-            <div class="card-actions justify-end">
-                <a
-                    href="{% url 'record_detail' pawnshop_id=record.pawnshop.id record_id=record.id %}"
-                    class="btn btn-neutral hover:btn-primary"
-                    >View</a
-                >
-            </div>
-        </div>
-    </div>
-    {% endfor %}
+<div class="flex items-center justify-between mb-4">
+    <h1 class="text-3xl text-primary-content mb-4">
+        Active Pawnshop Records in {{pawnshop.name}}
+    </h1>
+    <form
+        method="get"
+        action="{% url 'record_index' pawnshop_id=pawnshop.id%}"
+        class="flex items-center space-x-2 max-w-screen"
+    >
+        <input
+            type="text"
+            name="q"
+            value="{{ query|default:'' }}"
+            placeholder="Search records"
+            class="input input-bordered bg-neutral text-primary w-full"
+        />
+        <button type="submit" class="btn btn-accent">Search</button>
+    </form>
 </div>
-{% endblock %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+            class="card bg-accent shadow-lg p-8 flex items-center justify-center"
+        >
+            <div class="card-body text-center">
+                <h2 class="text-3xl text-white">+</h2>
+                <p class="text-white">Create New Record</p>
+                <div class="card-actions justify-center">
+                    <a
+                        href="{% url 'create_record' pawnshop_id=pawnshop.id%}"
+                        class="btn btn-primary"
+                    >
+                        Create
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% for record in records %}
+        <div class="card bg-secondary shadow-lg p-4">
+            <div class="card-body">
+                <h2 class="text-2xl">{{ record.name }}</h2>
+                <p class="text-primary-content">
+                    Loan Amount: {{ record.loan_amount }} ฿
+                </p>
+                <p class="text-primary-content">
+                    End Date: {{ record.end_date|date:"D. M. jS Y" }}
+                </p>
+                <div class="card-actions justify-end">
+                    <a
+                        href="{% url 'record_detail' pawnshop_id=record.pawnshop.id record_id=record.id %}"
+                        class="btn btn-neutral hover:btn-primary"
+                        >View</a
+                    >
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
+</div>

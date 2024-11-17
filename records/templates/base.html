@@ -61,3 +61,33 @@
         </script>
     </body>
 </html>
+
+<div class="fixed bottom-4 right-4 z-50">
+    <label for="disco-toggle" class="flex items-center cursor-pointer">
+        <span class="mr-2 text-gray-700">Disco Mode</span>
+        <input type="checkbox" id="disco-toggle" class="toggle">
+    </label>
+</div>
+
+
+
+<script>
+    
+
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>

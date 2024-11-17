@@ -95,11 +95,36 @@
         document.cookie = 'theme=' + newTheme + '; path=/';
     }
 
+    let isdiscoToggleOn = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const discoToggle = document.querySelector('#disco-toggle'); // Selecting the checkbox using querySelector
+
+        if (discoToggle) {
+            discoToggle.addEventListener('change', () => {
+                if (discoToggle.checked) {
+                    isdiscoToggleOn = true;
+
+                } else {
+                    isdiscoToggleOn = false;
+
+                }
+            });
+        }
+    });
+
     const nameInput = document.getElementById('id_name');
     const descriptionInput = document.getElementById('id_description');
 
     [nameInput, descriptionInput].forEach((input) => {
-        input.addEventListener('input', switchTheme);
+        if (input) { // Ensure the input element exists
+            input.addEventListener('input', () => {
+                // Check if Disco Mode is enabled before switching theme
+                if (isdiscoToggleOn) {
+                    switchTheme();
+                }
+            });
+        }
+            
     });
 </script>
 {% endblock %}

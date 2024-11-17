@@ -173,21 +173,29 @@
     const loanInput = document.getElementById('id_loan_amount');
     const interestInput = document.getElementById('id_interest_rate');
 
-    // Initialize the state of Disco Mode
+
     let isdiscoToggleOn = false;
+
     document.addEventListener('DOMContentLoaded', () => {
-        const discoToggle = document.querySelector('#disco-toggle'); // Selecting the checkbox using querySelector
+        const discoToggle = document.querySelector('#disco-toggle'); 
+
+        
+        const savedState = localStorage.getItem('isDiscoToggleOn');
+        if (savedState !== null) {
+            isdiscoToggleOn = JSON.parse(savedState); 
+            if (discoToggle) {
+                discoToggle.checked = isdiscoToggleOn; 
+            }
+        }
 
         if (discoToggle) {
             discoToggle.addEventListener('change', () => {
-                if (discoToggle.checked) {
-                    isdiscoToggleOn = true;
-                } else {
-                    isdiscoToggleOn = false;
-                }
+                isdiscoToggleOn = discoToggle.checked;
+                localStorage.setItem('isDiscoToggleOn', JSON.stringify(isdiscoToggleOn)); // Store state in localStorage
             });
         }
     });
+
 
     // Update the state when the checkbox is toggled
 

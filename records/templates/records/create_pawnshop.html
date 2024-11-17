@@ -97,17 +97,21 @@
 
     let isdiscoToggleOn = false;
     document.addEventListener('DOMContentLoaded', () => {
-        const discoToggle = document.querySelector('#disco-toggle'); // Selecting the checkbox using querySelector
+        const discoToggle = document.querySelector('#disco-toggle');
+
+        
+        const savedState = localStorage.getItem('isDiscoToggleOn');
+        if (savedState !== null) {
+            isdiscoToggleOn = JSON.parse(savedState); 
+            if (discoToggle) {
+                discoToggle.checked = isdiscoToggleOn; 
+            }
+        }
 
         if (discoToggle) {
             discoToggle.addEventListener('change', () => {
-                if (discoToggle.checked) {
-                    isdiscoToggleOn = true;
-
-                } else {
-                    isdiscoToggleOn = false;
-
-                }
+                isdiscoToggleOn = discoToggle.checked;
+                localStorage.setItem('isDiscoToggleOn', JSON.stringify(isdiscoToggleOn)); 
             });
         }
     });
@@ -116,9 +120,9 @@
     const descriptionInput = document.getElementById('id_description');
 
     [nameInput, descriptionInput].forEach((input) => {
-        if (input) { // Ensure the input element exists
+        if (input) { 
             input.addEventListener('input', () => {
-                // Check if Disco Mode is enabled before switching theme
+                
                 if (isdiscoToggleOn) {
                     switchTheme();
                 }

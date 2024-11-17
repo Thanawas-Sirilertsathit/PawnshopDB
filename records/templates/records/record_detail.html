@@ -36,12 +36,21 @@
             <li>No payments yet.</li>
             {% endfor %}
         </ul>
-        <div class="card-actions justify-start my-2">
-            <a
-                href="{% url 'record_index' pawnshop_id=record.pawnshop.id %}"
-                class="btn btn-neutral hover:btn-primary"
-                >Back to {{ record.pawnshop.name }}</a
-            >
+        <div class="flex justify-between">
+            <div class="card-actions justify-start my-2">
+                <a
+                    href="{% url 'record_index' pawnshop_id=record.pawnshop.id %}"
+                    class="btn btn-neutral hover:btn-primary"
+                    >Back to {{ record.pawnshop.name }}</a
+                >
+            </div>
+            <div class="card-actions justify-end my-2">
+                <a
+                    href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}"
+                    class="btn btn-info hover:brightness-50"
+                    >Loan Repayment</a
+                >
+            </div>
         </div>
     </div>
     {% endblock %}

@@ -60,13 +60,16 @@
                     >Back to {{ record.pawnshop.name }}</a
                 >
             </div>
+            {% if record.is_active %}
             <div class="card-actions justify-end my-2">
                 <a
                     href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}"
                     class="btn btn-info hover:brightness-50"
-                    >Loan Repayment</a
                 >
+                    Loan Repayment
+                </a>
             </div>
+            {% endif %}
         </div>
     </div>
     {% endblock %}

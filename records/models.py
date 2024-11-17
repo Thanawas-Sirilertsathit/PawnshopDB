@@ -56,7 +56,14 @@ class Record(models.Model):
 
         :return: True if contract is active.
         """
-        return self.end_date >= timezone.now() and self.active
+        return self.is_overdue() and self.active
+    
+    def is_overdue(self) -> Any:
+        """Check if contract is overdue or not.
+
+        :return: True if contract is overdue.
+        """
+        return self.end_date >= timezone.now()
 
     def loan_staff(self) -> User:
         """Find user that is host of the loan (is_staff is True).
@@ -134,6 +141,22 @@ class Payment(models.Model):
     def __str__(self) -> str:
         """Return payment information.
 
-        :return: user's username and the activity they've joined
+        :return: user's username and the money they've paid
         """
         return f"User {self.user.username} paid {self.money} for {self.record.name} record"
+    
+
+class Resell(models.Model):
+    """Income from resell the item."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    record = models.ForeignKey(Record, on_delete=models.CASCADE)
+    money = models.IntegerField(null=False, blank=False)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self) -> str:
+        """Return income information.
+
+        :return: user's username and the money they've gained
+        """
+        return f"User {self.user.username} gained {self.money} from {self.record.name} item after resell the contract."

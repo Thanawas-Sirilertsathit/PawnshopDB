@@ -79,3 +79,30 @@ npm i -D daisyui@latest
     ```bash
     python manage.py runserver
     ```
+
+## Tailwind Modification (For devs)
+
+1. Move to static_src directory (You can try step 4 first, if it does not work then move back to step 1 and do it respectively.)
+
+```bash
+cd theme/
+cd static_src/
+```
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Open new terminal which is in main directory then run this command
+
+```bash
+python manage.py collectstatic
+```
+
+4. Build tailwind
+
+```bash
+python manage.py tailwind build
+```

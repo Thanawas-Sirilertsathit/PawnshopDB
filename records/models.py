@@ -129,6 +129,7 @@ class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
     money = models.IntegerField(null=False, blank=False)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self) -> str:
         """Return payment information.

@@ -28,7 +28,7 @@
             {%else%}Closed{% endif %}
         </p>
 
-        <h2 class="text-gray-700 mt-2">Payment History</h2>
+        <h2 class="text-gray-700 mt-2 text-xl font-bold">Payment History</h2>
         <div class="mt-4 grid grid-cols-3 gap-4">
             {% if payments %} {% for payment in payments %}
             <div
@@ -37,6 +37,10 @@
                 <p class="text-lg font-semibold">
                     <span class="font-bold">{{ payment.user.username }}</span>
                     - Paid: <span class="font-mono">{{ payment.money }}฿</span>
+                    <br />
+                    <span class="font-semibold"
+                        >{{ payment.timestamp|date:"D. M. jS Y, H:i"}}</span
+                    >
                 </p>
             </div>
             {% endfor %} {% else %}

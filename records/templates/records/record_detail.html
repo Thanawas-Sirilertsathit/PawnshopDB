@@ -29,13 +29,25 @@
         </p>
 
         <h2 class="text-gray-700 mt-2">Payment History</h2>
-        <ul class="text-gray-700 mt-2">
-            {% for payment in payments %}
-            <li>{{ payment.user.username }} - Paid: {{ payment.money }}</li>
-            {% empty %}
-            <li>No payments yet.</li>
-            {% endfor %}
-        </ul>
+        <div class="mt-4 grid grid-cols-3 gap-4">
+            {% if payments %} {% for payment in payments %}
+            <div
+                class="card p-4 mb-4 shadow-lg rounded-xl-important text-gray-700 {% if payment.money > 1000000 %} bg-error {% elif 10000 <= payment.money and payment.money <= 1000000 %} bg-warning {% else %} bg-success {% endif %}"
+            >
+                <p class="text-lg font-semibold">
+                    <span class="font-bold">{{ payment.user.username }}</span>
+                    - Paid: <span class="font-mono">{{ payment.money }}฿</span>
+                </p>
+            </div>
+            {% endfor %} {% else %}
+            <div
+                class="card p-4 mb-4 shadow-lg rounded-xl-important bg-neutral text-gray-700 col-span-3 flex justify-center items-center"
+            >
+                <p class="text-lg text-error font-semibold">No payments yet.</p>
+            </div>
+            {% endif %}
+        </div>
+
         <div class="flex justify-between">
             <div class="card-actions justify-start my-2">
                 <a

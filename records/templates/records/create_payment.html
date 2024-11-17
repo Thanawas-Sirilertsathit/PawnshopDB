@@ -54,7 +54,7 @@
         <p class="text-xl font-semibold text-gray-700 ml-3">
             Remaining Loan Amount:
             <span
-                class="{% if record.remaining_loan_amount > 1000000 %} text-error {% elif 100000 <= record.remaining_loan_amount <= 1000000 %} text-warning {% else %} text-success {% endif %}"
+                class="{% if record.remaining_loan_amount > 1000000 %} text-error {% elif 10000 <= record.remaining_loan_amount <= 1000000 %} text-warning {% else %} text-success {% endif %}"
             >
                 {{ record.remaining_loan_amount }}
             </span>

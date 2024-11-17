@@ -51,19 +51,19 @@ class Record(models.Model):
         """
         return self.name
 
-    def is_active(self) -> Any:
+    def is_active(self) -> bool:
         """Check if contract is ended or not.
 
         :return: True if contract is active.
         """
-        return self.is_overdue() and self.active
+        return self.active
     
-    def is_overdue(self) -> Any:
+    def is_overdue(self) -> bool:
         """Check if contract is overdue or not.
 
         :return: True if contract is overdue.
         """
-        return self.end_date >= timezone.now()
+        return self.end_date <= timezone.now()
 
     def loan_staff(self) -> User:
         """Find user that is host of the loan (is_staff is True).
@@ -114,6 +114,20 @@ class Record(models.Model):
 
         return max(remaining_amount, 0)
 
+    def has_been_resold(self) -> bool:
+        """Check if the record has been resold.
+
+        :return: True if the record has a related resell entry.
+        """
+        return self.resell_set.exists()
+
+    def total_resell_income(self) -> int:
+        """Calculate total income from resell.
+
+        :return: Total income generated from reselling.
+        """
+        return self.resell_set.aggregate(Sum('money'))['money__sum'] or 0
+
 
 class LoanOffer(models.Model):
     """Loan model to store loan."""
@@ -154,9 +168,17 @@ class Resell(models.Model):
     money = models.IntegerField(null=False, blank=False)
     timestamp = models.DateTimeField(default=timezone.now)
 
-    def __str__(self) -> str:
-        """Return income information.
+    def save(self, *args, **kwargs):
+        """Override save to mark the associated record as inactive."""
+        super().save(*args, **kwargs)
+        # Deactivate the associated record after resell
+        if self.record.is_active():
+            self.record.active = False
+            self.record.save()
 
-        :return: user's username and the money they've gained
-        """
-        return f"User {self.user.username} gained {self.money} from {self.record.name} item after resell the contract."
+    def __str__(self) -> str:
+        """Return income information."""
+        return (
+            f"User {self.user.username} gained {self.money} from "
+            f"{self.record.name} item after reselling the contract."
+        )

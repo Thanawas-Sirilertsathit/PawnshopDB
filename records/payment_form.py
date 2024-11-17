@@ -1,5 +1,5 @@
 from django import forms
-from .models import Payment, Record
+from .models import Payment, Record, Resell
 
 class PaymentForm(forms.ModelForm):
     """Form for creating a payment."""
@@ -28,3 +28,17 @@ class PaymentForm(forms.ModelForm):
             )
 
         return money
+
+
+class ResellForm(forms.ModelForm):
+    """Form for creating Resell."""
+    class Meta:
+        model = Resell
+        fields = ['money']
+        widgets = {
+            'money': forms.NumberInput(attrs={
+                'class': 'input input-bordered',
+                'placeholder': 'Enter resell amount',
+                'min': 0
+            }),
+        }

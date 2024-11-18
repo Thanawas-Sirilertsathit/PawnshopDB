@@ -106,3 +106,17 @@ python manage.py collectstatic
 ```bash
 python manage.py tailwind build
 ```
+
+## Migrate (For devs)
+
+- If you update model. After run this please also do the following command below.
+
+```bash
+python manage.py makemigrations
+```
+
+- If your friend update model.
+
+```bash
+python manage.py migrate
+```

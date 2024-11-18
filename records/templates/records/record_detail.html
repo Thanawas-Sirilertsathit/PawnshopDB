@@ -24,7 +24,7 @@
             {{ record.end_date|date:"D. M. jS Y" }}
         </p>
         <p class="text-gray-700 mt-2">
-            <strong>Status:</strong> {% if record.active %}<span
+            <strong>Record Status:</strong> {% if record.active %}<span
                 class="text-success"
                 >Active</span
             >
@@ -40,17 +40,17 @@
         </p>
         <p class="text-gray-700 mt-2">
             <strong>Item Status:</strong>
-            {% if status == 0 %}
+            {% if record.item_status == 0 %}
             <span class="text-warning bg-neutral p-1 rounded-lg">Item is still in Pawnshop.</span>
-            {% elif status == 1 %}
+            {% elif record.item_status == 1 %}
             <span class="text-warning bg-neutral p-1 rounded-lg">Waiting for retrieval.</span>
-            {% elif status == 2 %}
+            {% elif record.item_status == 2 %}
             <span class="text-success bg-neutral p-1 rounded-lg">Retrieved.</span>
-            {% elif status == 3 %}
+            {% elif record.item_status == 3 %}
             <span class="text-warning bg-neutral p-1 rounded-lg">Waiting for reselling.</span>
-            {% elif status == 4 %}
+            {% elif record.item_status == 4 %}
             <span class="text-error bg-neutral p-1 rounded-lg">Resold.</span>
-            {% elif status == 5 %}
+            {% elif record.item_status == 5 %}
             <span class="text-error bg-neutral p-1 rounded-lg">Lost!</span>
             {% endif %}
         </p>
@@ -87,7 +87,7 @@
                 >
             </div>
             <div class="card-actions justify-end my-2 space-x-2">
-                {% if status == 0 or status == 3 %}
+                {% if record.item_status == 0 or record.item_status == 3 %}
                 <div class="card-actions justify-end my-2">
                     <a
                         href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}"
@@ -96,7 +96,16 @@
                         Loan Repayment
                     </a>
                 </div>
-                {%endif%} {% if status == 3 %}
+                {% elif record.item_status == 1 %}
+                <div class="card-actions justify-end my-2">
+                    <a
+                        href="{% url 'retrieve' pawnshop_id=record.pawnshop.id record_id=record.id %}"
+                        class="btn btn-success hover:brightness-50"
+                    >
+                        Retrieve the item
+                    </a>
+                </div>
+                {%endif%} {% if record.item_status == 3 %}
                 <div class="card-actions justify-end my-2">
                     <a
                         href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}"

@@ -71,7 +71,7 @@ class RecordDetail(View):
         remaining_loan = record.remaining_loan_amount()
         payments = Payment.objects.filter(record=record)
         overdue = record.is_overdue()
-        status = record.item_status
+        print(record.item_status)
 
         context = {
             'record': record,
@@ -79,7 +79,6 @@ class RecordDetail(View):
             'total_due': total_due,
             'remaining_loan': remaining_loan,
             'payments': payments,
-            'status': status,
             'overdue': overdue,
         }
         return render(request, 'records/record_detail.html', context)
@@ -111,3 +110,14 @@ class CreateRecordView(View):
             messages.success(request, "Record created successfully!")
             return redirect('record_index', pawnshop_id = pawnshop.id)
         return render(request, 'records/create_record.html', {'form': form, 'pawnshop': pawnshop})
+
+
+def retrieveItem(request, pawnshop_id, record_id):
+    """Retrieve item from record."""
+    record = get_object_or_404(Record, pk=record_id, pawnshop_id=pawnshop_id)
+    print(record)
+    record.item_status = 2
+    record.active = False
+    record.save()
+    print(record.item_status)
+    return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record_id)

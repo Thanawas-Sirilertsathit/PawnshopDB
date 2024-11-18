@@ -43,6 +43,20 @@ class Record(models.Model):
             MaxValueValidator(100)
         ]
     )
+    item_status = models.IntegerField(
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(5)
+        ]
+    )
+    # Status of items
+    # 0 = Item is in Pawnshop
+    # 1 = Waiting for retrieval
+    # 2 = Retrieved (then close the record)
+    # 3 = Waiting for reselling
+    # 4 = Resold (then close the record)
+    # 5 = Lost
 
     def __str__(self) -> Any:
         """Return Record Name Name as string representative.
@@ -51,12 +65,23 @@ class Record(models.Model):
         """
         return self.name
 
-    def is_active(self) -> Any:
+    def is_active(self) -> bool:
         """Check if contract is ended or not.
 
         :return: True if contract is active.
         """
-        return self.end_date >= timezone.now() and self.active
+        return self.active
+    
+    def is_overdue(self) -> bool:
+        """Check if contract is overdue or not.
+
+        :return: True if contract is overdue.
+        """
+        if self.end_date <= timezone.now():
+            if self.item_status == 0:
+                self.item_status = 3
+                self.save()
+            return True
 
     def loan_staff(self) -> User:
         """Find user that is host of the loan (is_staff is True).
@@ -102,10 +127,25 @@ class Record(models.Model):
 
         # Close the record if payment exceed or equal to requirement
         if remaining_amount <= 0:
-            self.active = False
+            if self.item_status == 0:
+                self.item_status = 1
             self.save()
 
         return max(remaining_amount, 0)
+
+    def has_been_resold(self) -> bool:
+        """Check if the record has been resold.
+
+        :return: True if the record has a related resell entry.
+        """
+        return self.resell_set.exists()
+
+    def total_resell_income(self) -> int:
+        """Calculate total income from resell.
+
+        :return: Total income generated from reselling.
+        """
+        return self.resell_set.aggregate(Sum('money'))['money__sum'] or 0
 
 
 class LoanOffer(models.Model):
@@ -129,10 +169,35 @@ class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
     money = models.IntegerField(null=False, blank=False)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self) -> str:
         """Return payment information.
 
-        :return: user's username and the activity they've joined
+        :return: user's username and the money they've paid
         """
         return f"User {self.user.username} paid {self.money} for {self.record.name} record"
+    
+
+class Resell(models.Model):
+    """Income from resell the item."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    record = models.ForeignKey(Record, on_delete=models.CASCADE)
+    money = models.IntegerField(null=False, blank=False)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        """Override save to mark the associated record as inactive."""
+        super().save(*args, **kwargs)
+        # Deactivate the associated record after resell
+        if self.record.is_active():
+            self.record.active = False
+            self.record.save()
+
+    def __str__(self) -> str:
+        """Return income information."""
+        return (
+            f"User {self.user.username} gained {self.money} from "
+            f"{self.record.name} item after reselling the contract."
+        )

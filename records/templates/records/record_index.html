@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <div class="flex items-center justify-between mb-4">
     <h1 class="text-3xl text-primary-content mb-4">
-        Active Pawnshop Records in {{pawnshop.name}}
+        Pawnshop Records in {{pawnshop.name}}
     </h1>
     <form
         method="get"
@@ -36,7 +36,14 @@
             </div>
         </div>
         {% for record in records %}
-        <div class="card bg-secondary shadow-lg p-4">
+        <div class="card shadow-lg p-4 
+        {% if record.item_status == 0 %} bg-secondary
+        {% elif record.item_status == 1 %} bg-accent
+        {% elif record.item_status == 2 %} bg-success
+        {% elif record.item_status == 3 %} bg-warning
+        {% elif record.item_status == 4 %} bg-info
+        {% elif record.item_status == 5 %} bg-error
+        {% endif %}">
             <div class="card-body">
                 <h2 class="text-2xl">{{ record.name }}</h2>
                 <p class="text-primary-content">

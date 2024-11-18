@@ -80,6 +80,7 @@ class Record(models.Model):
         if self.end_date <= timezone.now():
             if self.item_status == 0:
                 self.item_status = 3
+                self.save()
             return True
 
     def loan_staff(self) -> User:

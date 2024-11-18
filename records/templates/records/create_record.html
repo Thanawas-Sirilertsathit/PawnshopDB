@@ -173,6 +173,32 @@
     const loanInput = document.getElementById('id_loan_amount');
     const interestInput = document.getElementById('id_interest_rate');
 
+
+    let isdiscoToggleOn = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const discoToggle = document.querySelector('#disco-toggle'); 
+
+        
+        const savedState = localStorage.getItem('isDiscoToggleOn');
+        if (savedState !== null) {
+            isdiscoToggleOn = JSON.parse(savedState); 
+            if (discoToggle) {
+                discoToggle.checked = isdiscoToggleOn; 
+            }
+        }
+
+        if (discoToggle) {
+            discoToggle.addEventListener('change', () => {
+                isdiscoToggleOn = discoToggle.checked;
+                localStorage.setItem('isDiscoToggleOn', JSON.stringify(isdiscoToggleOn)); // Store state in localStorage
+            });
+        }
+    });
+
+
+    // Update the state when the checkbox is toggled
+
     [
         nameInput,
         detailInput,
@@ -181,7 +207,19 @@
         loanInput,
         interestInput,
     ].forEach((input) => {
-        input.addEventListener('input', switchTheme);
-    });
+          
+        if (input) { // Ensure the input element exists
+            input.addEventListener('input', () => {
+                // Check if Disco Mode is enabled before switching theme
+                if (isdiscoToggleOn) {
+                    switchTheme();
+                }
+            });
+        }
+            
+        
+        }
+    );
+
 </script>
 {% endblock %}

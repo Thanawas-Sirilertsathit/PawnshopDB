@@ -38,6 +38,22 @@
             <span class="text-success">On Time</span>
             {% endif %}
         </p>
+        <p class="text-gray-700 mt-2">
+            <strong>Item Status:</strong>
+            {% if status == 0 %}
+            <span class="text-warning bg-neutral p-1 rounded-lg">Item is still in Pawnshop.</span>
+            {% elif status == 1 %}
+            <span class="text-warning bg-neutral p-1 rounded-lg">Waiting for retrieval.</span>
+            {% elif status == 2 %}
+            <span class="text-success bg-neutral p-1 rounded-lg">Retrieved.</span>
+            {% elif status == 3 %}
+            <span class="text-warning bg-neutral p-1 rounded-lg">Waiting for reselling.</span>
+            {% elif status == 4 %}
+            <span class="text-error bg-neutral p-1 rounded-lg">Resold.</span>
+            {% elif status == 5 %}
+            <span class="text-error bg-neutral p-1 rounded-lg">Lost!</span>
+            {% endif %}
+        </p>
         <h2 class="text-gray-700 mt-2 text-xl font-bold">Payment History</h2>
         <div class="mt-4 grid grid-cols-3 gap-4">
             {% if payments %} {% for payment in payments %}
@@ -71,7 +87,7 @@
                 >
             </div>
             <div class="card-actions justify-end my-2 space-x-2">
-                {% if record.is_active %}
+                {% if status == 0 or status == 3 %}
                 <div class="card-actions justify-end my-2">
                     <a
                         href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}"
@@ -80,7 +96,7 @@
                         Loan Repayment
                     </a>
                 </div>
-                {%endif%} {% if record.is_active and record.is_overdue %}
+                {%endif%} {% if status == 3 %}
                 <div class="card-actions justify-end my-2">
                     <a
                         href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}"

@@ -67,6 +67,7 @@ class CreateResellView(View):
             resell.save()
 
             record.active = False
+            record.item_status = 4
             record.save()
 
             messages.success(request, "Resell transaction created successfully.")

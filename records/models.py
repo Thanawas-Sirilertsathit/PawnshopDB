@@ -43,6 +43,20 @@ class Record(models.Model):
             MaxValueValidator(100)
         ]
     )
+    item_status = models.IntegerField(
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(5)
+        ]
+    )
+    # Status of items
+    # 0 = Item is in Pawnshop
+    # 1 = Waiting for retrieval
+    # 2 = Retrieved (then close the record)
+    # 3 = Waiting for reselling
+    # 4 = Resold (then close the record)
+    # 5 = Lost
 
     def __str__(self) -> Any:
         """Return Record Name Name as string representative.
@@ -63,7 +77,10 @@ class Record(models.Model):
 
         :return: True if contract is overdue.
         """
-        return self.end_date <= timezone.now()
+        if self.end_date <= timezone.now():
+            if self.item_status == 0:
+                self.item_status = 3
+            return True
 
     def loan_staff(self) -> User:
         """Find user that is host of the loan (is_staff is True).
@@ -109,7 +126,7 @@ class Record(models.Model):
 
         # Close the record if payment exceed or equal to requirement
         if remaining_amount <= 0:
-            self.active = False
+            self.item_status = 1
             self.save()
 
         return max(remaining_amount, 0)

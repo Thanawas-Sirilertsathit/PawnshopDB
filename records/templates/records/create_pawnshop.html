@@ -95,11 +95,40 @@
         document.cookie = 'theme=' + newTheme + '; path=/';
     }
 
+    let isdiscoToggleOn = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const discoToggle = document.querySelector('#disco-toggle');
+
+        
+        const savedState = localStorage.getItem('isDiscoToggleOn');
+        if (savedState !== null) {
+            isdiscoToggleOn = JSON.parse(savedState); 
+            if (discoToggle) {
+                discoToggle.checked = isdiscoToggleOn; 
+            }
+        }
+
+        if (discoToggle) {
+            discoToggle.addEventListener('change', () => {
+                isdiscoToggleOn = discoToggle.checked;
+                localStorage.setItem('isDiscoToggleOn', JSON.stringify(isdiscoToggleOn)); 
+            });
+        }
+    });
+
     const nameInput = document.getElementById('id_name');
     const descriptionInput = document.getElementById('id_description');
 
     [nameInput, descriptionInput].forEach((input) => {
-        input.addEventListener('input', switchTheme);
+        if (input) { 
+            input.addEventListener('input', () => {
+                
+                if (isdiscoToggleOn) {
+                    switchTheme();
+                }
+            });
+        }
+            
     });
 </script>
 {% endblock %}

@@ -1,11 +1,33 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import Record, Payment, Pawnshop
+from .models import Record, Payment, Pawnshop, Profile
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.forms import UserCreationForm
+
+
+class RegisterView(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, "records/register.html", {"form": form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Profile.objects.create(user=user, role="customer")
+            return redirect("index")
+        else:
+            return render(request, "records/register.html", {"form": form})
+
+
+class LoginView(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, "records/login.html", {"form": form})
 
 
 class PawnshopListView(View):

@@ -117,7 +117,20 @@
             placeholder="Enter Interest Rate"
         />
     </div>
-
+    <div class="form-group mb-4 flex gap-4">
+        <label
+            for="id_customer"
+            class="block text-white text-lg font-semibold mt-2"
+            >Select customer</label
+        >
+        {{ form.customer }} {% if form.customer.errors %}
+        <div class="text-error text-sm mt-2">
+            {% for error in form.customer.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
     <div class="form-group text-center">
         <button
             type="submit"
@@ -173,29 +186,29 @@
     const loanInput = document.getElementById('id_loan_amount');
     const interestInput = document.getElementById('id_interest_rate');
 
-
     let isdiscoToggleOn = false;
 
     document.addEventListener('DOMContentLoaded', () => {
-        const discoToggle = document.querySelector('#disco-toggle'); 
+        const discoToggle = document.querySelector('#disco-toggle');
 
-        
         const savedState = localStorage.getItem('isDiscoToggleOn');
         if (savedState !== null) {
-            isdiscoToggleOn = JSON.parse(savedState); 
+            isdiscoToggleOn = JSON.parse(savedState);
             if (discoToggle) {
-                discoToggle.checked = isdiscoToggleOn; 
+                discoToggle.checked = isdiscoToggleOn;
             }
         }
 
         if (discoToggle) {
             discoToggle.addEventListener('change', () => {
                 isdiscoToggleOn = discoToggle.checked;
-                localStorage.setItem('isDiscoToggleOn', JSON.stringify(isdiscoToggleOn)); // Store state in localStorage
+                localStorage.setItem(
+                    'isDiscoToggleOn',
+                    JSON.stringify(isdiscoToggleOn)
+                ); // Store state in localStorage
             });
         }
     });
-
 
     // Update the state when the checkbox is toggled
 
@@ -207,8 +220,8 @@
         loanInput,
         interestInput,
     ].forEach((input) => {
-          
-        if (input) { // Ensure the input element exists
+        if (input) {
+            // Ensure the input element exists
             input.addEventListener('input', () => {
                 // Check if Disco Mode is enabled before switching theme
                 if (isdiscoToggleOn) {
@@ -216,10 +229,6 @@
                 }
             });
         }
-            
-        
-        }
-    );
-
+    });
 </script>
 {% endblock %}

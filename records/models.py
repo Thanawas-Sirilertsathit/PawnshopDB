@@ -140,8 +140,9 @@ class Payment(models.Model):
 
 class Profile(models.Model):
     """User profile model to store user information"""
+    ROLES = ["User", "Staff", "Admin"]
     user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
-    role = models.CharField(default="User", verbose_name="role")
+    role = models.CharField(default="User", verbose_name="role", max_length=255, choices=ROLES, null=False)
 
     def __str__(self) -> str:
         """Return user information.

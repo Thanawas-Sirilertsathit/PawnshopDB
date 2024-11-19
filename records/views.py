@@ -7,7 +7,7 @@ from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 
 
 class RegisterView(View):
@@ -37,6 +37,12 @@ class LoginView(View):
             login(request, form.get_user())
             return redirect("index")
         return render(request, "records/login.html", {"form": form})
+
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, "You have been logged out")
+    return redirect("index")
 
 
 class PawnshopListView(View):

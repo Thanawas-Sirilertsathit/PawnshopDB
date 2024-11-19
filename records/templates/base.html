@@ -27,6 +27,7 @@
                             <a href="{% url "register" %}">Sign-up</a>
                         {% else %}
                             Welcome to the Trinity Pawnshop, <a href="#">{{user.username}}</a>
+                            <a href="{% url "logout" %}">Logout</a>
                         {% endif %}
                     </li>
                 </ul>

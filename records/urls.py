@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:pawnshop_id>/record/<int:record_id>/', RecordDetail.as_view(), name='record_detail'),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', logout_user, name='logout'),
 ]

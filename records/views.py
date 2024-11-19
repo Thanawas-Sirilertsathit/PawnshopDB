@@ -108,6 +108,8 @@ class RecordDetail(View):
         remaining_loan = record.remaining_loan_amount()
         payments = Payment.objects.filter(record=record)
         overdue = record.is_overdue()
+        staff = record.loan_staff()
+        customer = record.customer()
         print(record.item_status)
 
         context = {
@@ -117,6 +119,8 @@ class RecordDetail(View):
             'remaining_loan': remaining_loan,
             'payments': payments,
             'overdue': overdue,
+            'staff': staff,
+            'customer': customer,
         }
         return render(request, 'records/record_detail.html', context)
 

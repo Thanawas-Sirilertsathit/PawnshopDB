@@ -45,7 +45,7 @@ class Record(models.Model):
     )
 
     def __str__(self) -> Any:
-        """Return Record Name Name as string representative.
+        """Return Record Name as string representative.
 
         :return: record name
         """
@@ -136,3 +136,16 @@ class Payment(models.Model):
         :return: user's username and the activity they've joined
         """
         return f"User {self.user.username} paid {self.money} for {self.record.name} record"
+
+
+class Profile(models.Model):
+    """User profile model to store user information"""
+    user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
+    role = models.CharField(default="User", verbose_name="role")
+
+    def __str__(self) -> str:
+        """Return user information.
+
+        :return: user's username and their role
+        """
+        return f"User {self.user.username} is {self.user.profile.role}"

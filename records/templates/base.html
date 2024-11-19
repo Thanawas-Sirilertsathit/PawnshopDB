@@ -17,6 +17,34 @@
                     <li>
                         <a href="{% url 'admin:index' %}" class="text-primary">Admin</a>
                     </li>
+                                        {% if not user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'login' %}" class="text-primary"
+                            >Login</a
+                        >
+                    </li>
+                    <li>
+                        <a href="{% url 'register' %}" class="text-primary"
+                            >Sign-up</a
+                        >
+                    </li>
+                    {% else %}
+                    <li>
+                        <div class="flex">
+                            <p class="text-secondary">
+                                Welcome to the Trinity Pawnshop:&nbsp;
+                            </p>
+                            <a href="#" class="text-primary">
+                                {{ user.username }}</a
+                            >
+                        </div>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}" class="text-primary"
+                            >Logout</a
+                        >
+                    </li>
+                    {% endif %}
                 </ul>
                 <div class="flex justify-end space-x-4">
                     <label for="disco-toggle" class="flex items-center cursor-pointer">

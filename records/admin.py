@@ -2,8 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import Record
-from .models import Pawnshop
+from .models import Record, Pawnshop, Profile
 
 
 @admin.register(Record)
@@ -16,3 +15,9 @@ class RecordAdmin(admin.ModelAdmin):
 class PawnshopAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name',)
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'role')
+    search_fields = ('user', 'role')

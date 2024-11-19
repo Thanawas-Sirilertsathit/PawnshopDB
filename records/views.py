@@ -6,7 +6,8 @@ from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
 from django.db.models import Q
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login
 
 
 class RegisterView(View):
@@ -19,6 +20,7 @@ class RegisterView(View):
         if form.is_valid():
             user = form.save()
             Profile.objects.create(user=user, role="customer")
+            login(request, user)
             return redirect("index")
         else:
             return render(request, "records/register.html", {"form": form})
@@ -26,7 +28,14 @@ class RegisterView(View):
 
 class LoginView(View):
     def get(self, request):
-        form = UserCreationForm()
+        form = AuthenticationForm()
+        return render(request, "records/login.html", {"form": form})
+
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect("index")
         return render(request, "records/login.html", {"form": form})
 
 

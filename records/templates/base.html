@@ -22,6 +22,12 @@
                         <a href="{% url 'admin:index' %}" class="text-primary"
                             >Admin</a
                         >
+                        {% if not user.is_authenticated %}
+                            <a href="{% url "login" %}">Login</a>
+                            <a href="{% url "register" %}">Sign-up</a>
+                        {% else %}
+                            Welcome to the Trinity Pawnshop, <a href="#">{{user.username}}</a>
+                        {% endif %}
                     </li>
                 </ul>
                 <button id="theme-toggle" class="btn btn-secondary">◐</button>
@@ -59,5 +65,6 @@
                 document.cookie = 'theme=' + newTheme + '; path=/';
             });
         </script>
+    <a href=""
     </body>
 </html>

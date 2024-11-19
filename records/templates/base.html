@@ -22,15 +22,38 @@
                         <a href="{% url 'admin:index' %}" class="text-primary"
                             >Admin</a
                         >
-                        {% if not user.is_authenticated %}
-                            <a href="{% url "login" %}">Login</a>
-                            <a href="{% url "register" %}">Sign-up</a>
-                        {% else %}
-                            Welcome to the Trinity Pawnshop, <a href="#">{{user.username}}</a>
-                            <a href="{% url "logout" %}">Logout</a>
-                        {% endif %}
                     </li>
+
+                    {% if not user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'login' %}" class="text-primary"
+                            >Login</a
+                        >
+                    </li>
+                    <li>
+                        <a href="{% url 'register' %}" class="text-primary"
+                            >Sign-up</a
+                        >
+                    </li>
+                    {% else %}
+                    <li>
+                        <div class="flex">
+                            <p class="text-secondary">
+                                Welcome to the Trinity Pawnshop:&nbsp;
+                            </p>
+                            <a href="#" class="text-primary">
+                                {{ user.username }}</a
+                            >
+                        </div>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}" class="text-primary"
+                            >Logout</a
+                        >
+                    </li>
+                    {% endif %}
                 </ul>
+
                 <button id="theme-toggle" class="btn btn-secondary">◐</button>
             </nav>
         </header>
@@ -66,6 +89,6 @@
                 document.cookie = 'theme=' + newTheme + '; path=/';
             });
         </script>
-    <a href=""
+        <a href=""
     </body>
 </html>

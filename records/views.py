@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import Record, Payment, Pawnshop, Profile
+from .models import Record, Payment, Pawnshop, Profile, LoanOffer
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
@@ -108,6 +108,8 @@ class RecordDetail(View):
         remaining_loan = record.remaining_loan_amount()
         payments = Payment.objects.filter(record=record)
         overdue = record.is_overdue()
+        staff = record.loan_staff()
+        customer = record.customer()
         print(record.item_status)
 
         context = {
@@ -117,6 +119,8 @@ class RecordDetail(View):
             'remaining_loan': remaining_loan,
             'payments': payments,
             'overdue': overdue,
+            'staff': staff,
+            'customer': customer,
         }
         return render(request, 'records/record_detail.html', context)
 
@@ -144,6 +148,20 @@ class CreateRecordView(View):
             record.item_status = 0
             record.active = True
             record.save()
+            # Logged in staff is determined to be staff of this record.
+            LoanOffer.objects.create(
+                user=request.user,
+                record=record,
+                is_staff=True
+            )
+
+            # Create a LoanOffer for the selected customer.
+            customer_profile = form.cleaned_data['customer']
+            LoanOffer.objects.create(
+                user=customer_profile.user,
+                record=record,
+                is_staff=False
+            )
             messages.success(request, "Record created successfully!")
             return redirect('record_index', pawnshop_id = pawnshop.id)
         return render(request, 'records/create_record.html', {'form': form, 'pawnshop': pawnshop})

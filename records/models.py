@@ -215,4 +215,4 @@ class Profile(models.Model):
 
         :return: user's username and their role
         """
-        return f"User {self.user.username} is {self.role}"
+        return f"{self.user.username}"

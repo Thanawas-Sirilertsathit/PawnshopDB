@@ -33,14 +33,13 @@
     const income_chart_data = {{ income_chart_data|safe }};
     const expense_chart_data = {{ expense_chart_data|safe }};
     const days = {{ days|safe }};
+
     document.addEventListener('DOMContentLoaded', function () {
         const incomeChartData = income_chart_data;
         const expenseChartData = expense_chart_data;
         const days_display = days;
 
-        const ctx = document
-            .getElementById('incomeExpenseChart')
-            .getContext('2d');
+        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
 
         new Chart(ctx, {
             type: 'bar',
@@ -65,8 +64,33 @@
             },
             options: {
                 responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Income and Expenses for {{ pawnshop.name }} during {{ selected_month_display }}',
+                        font: {
+                            size: 18,
+                        },
+                    },
+                },
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days',
+                            font: {
+                                size: 14,
+                            },
+                        },
+                    },
                     y: {
+                        title: {
+                            display: true,
+                            text: 'Amount (฿)',
+                            font: {
+                                size: 14,
+                            },
+                        },
                         beginAtZero: true,
                     },
                 },

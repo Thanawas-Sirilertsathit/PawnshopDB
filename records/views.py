@@ -244,12 +244,15 @@ def monthly_statistics(request, pawnshop_id):
     income_chart_data = [income.get(day, 0) for day in days]
     expense_chart_data = [expenses.get(day, 0) for day in days]
     days_display = [day.strftime('%d %B %Y') for day in days]
+    selected_month_display = selected_date.strftime('%B %Y')
+
     context = {
         'pawnshop': pawnshop,
         'selected_month': selected_date.strftime('%Y-%m'),
         'days': days_display,
         'income_chart_data': income_chart_data,
         'expense_chart_data': expense_chart_data,
+        'selected_month_display': selected_month_display,
     }
     print(context) # to be removed
     return render(request, 'records/monthly_statistics.html', context)

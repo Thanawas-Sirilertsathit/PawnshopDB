@@ -179,10 +179,6 @@ def retrieveItem(request, pawnshop_id, record_id):
     return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record_id)
 
 
-from django.utils import timezone
-from django.db.models import Sum
-from datetime import datetime, date, timedelta
-
 def monthly_statistics(request, pawnshop_id):
     """View to display daily statistics for a specific month and pawnshop."""
     pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)

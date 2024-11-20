@@ -6,9 +6,13 @@
     <div class="flex space-x-4">
         <form method="get" class="mb-6">
             <label for="year" class="font-semibold">Select Year:</label>
-            <input type="number" id="year" name="year" value="{{
-            selected_year}}" min="2000" max="{{ now|date:"Y" }}" class="input
-            input-bordered mx-2 bg-neutral text-primary" />
+            <input
+                type="year"
+                id="year"
+                name="year"
+                value="{{selected_year}}"
+                class="input input-bordered mx-2 bg-neutral text-primary"
+            />
             <button type="submit" class="btn btn-secondary">View</button>
         </form>
         <div class="card-actions justify-start">

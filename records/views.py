@@ -219,30 +219,6 @@ def retrieveItem(request, pawnshop_id, record_id):
     return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record_id)
 
 
-class EditRecordView(View):
-    """View to edit an existing record for a specific pawnshop."""
-
-    def get(self, request, pawnshop_id, record_id):
-        """Get form pre-filled with the record's current data."""
-        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
-        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
-        # Pre-fill the form with record data
-        form = RecordForm(instance=record)
-        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
-
-    def post(self, request, pawnshop_id, record_id):
-        """Save changes to the record."""
-        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
-        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
-        # Bind the form to the existing record
-        form = RecordForm(request.POST, instance=record)
-        if form.is_valid():
-            form.save()  # Save the changes
-            messages.success(request, "Record updated successfully!")
-            return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
-        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
-
-
 def monthly_statistics(request, pawnshop_id):
     """View to display daily statistics for a specific month and pawnshop."""
     pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
@@ -322,3 +298,27 @@ def monthly_statistics(request, pawnshop_id):
         'selected_month_display': selected_month_display,
     }
     return render(request, 'records/monthly_statistics.html', context)
+
+
+class EditRecordView(View):
+    """View to edit an existing record for a specific pawnshop."""
+
+    def get(self, request, pawnshop_id, record_id):
+        """Get form pre-filled with the record's current data."""
+        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
+        # Pre-fill the form with record data
+        form = RecordForm(instance=record)
+        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
+
+    def post(self, request, pawnshop_id, record_id):
+        """Save changes to the record."""
+        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
+        # Bind the form to the existing record
+        form = RecordForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()  # Save the changes
+            messages.success(request, "Record updated successfully!")
+            return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
+        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})

@@ -188,12 +188,16 @@ class CreateRecordView(View):
         return render(request, 'records/create_record.html', {'form': form, 'pawnshop': pawnshop})
 
 
-@method_decorator([login_required, role_required("customer")], name="dispatch")
 def retrieveItem(request, pawnshop_id, record_id):
     """Retrieve item from record."""
     record = get_object_or_404(Record, pk=record_id, pawnshop_id=pawnshop_id)
-    if record.customer() != request.user:
-        messages.warning(request, f"You are not the customer of this record.")
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role != 'customer' or record.customer() != request.user:
+            messages.warning(request, "You are not the customer of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+    except Profile.DoesNotExist:
+        messages.error(request, "Profile not found. Please contact support.")
         return redirect(request.META.get('HTTP_REFERER', 'index'))
     print(record)
     record.item_status = 2

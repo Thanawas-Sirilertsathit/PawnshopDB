@@ -131,3 +131,4 @@ INTERNAL_IPS = [
 ]
 NPM_BIN_PATH = config('PATH_TO_NPM', default='')
 
+LOGIN_URL = '/records/login'

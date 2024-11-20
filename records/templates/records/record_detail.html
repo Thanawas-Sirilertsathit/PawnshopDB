@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} 
+{% block content %}
 <div class="card bg-secondary shadow-lg p-4">
     <div class="card-body">
         <h1 class="text-3xl text-primary-content mt-2">{{ record.name }}</h1>
@@ -22,11 +23,11 @@
 
         <div class="flex justify-between">
             <p class="text-gray-700 mt-2">
-                <strong>Record Status:</strong> {% if record.active %}<span
-                    class="text-success"
-                    >Active</span
-                >
-                {%else%}<span class="text-error">Closed</span>{% endif %}
+                <strong>Record Status:</strong> {% if record.active %}
+                <span class="text-success">Active</span>
+                {% else %}
+                <span class="text-error">Closed</span>
+                {% endif %}
             </p>
             <p class="text-gray-700 mt-2">
                 <strong>Overdue Status:</strong>
@@ -50,26 +51,18 @@
         <p class="text-gray-700 mt-2">
             <strong>Contract period:</strong>
             {{ record.start_date|date:"D. M. jS Y"}} -
-            {{record.end_date|date:"D. M. jS Y" }}
+            {{ record.end_date|date:"D. M. jS Y" }}
         </p>
         <p class="text-gray-700 mt-2">
             <strong>Item Status:</strong>
             {% if record.item_status == 0 %}
-            <span class="text-warning bg-neutral p-1 rounded-lg"
-                >Item is still in Pawnshop.</span
-            >
+            <span class="text-warning bg-neutral p-1 rounded-lg">Item is still in Pawnshop.</span>
             {% elif record.item_status == 1 %}
-            <span class="text-warning bg-neutral p-1 rounded-lg"
-                >Waiting for retrieval.</span
-            >
+            <span class="text-warning bg-neutral p-1 rounded-lg">Waiting for retrieval.</span>
             {% elif record.item_status == 2 %}
-            <span class="text-success bg-neutral p-1 rounded-lg"
-                >Retrieved.</span
-            >
+            <span class="text-success bg-neutral p-1 rounded-lg">Retrieved.</span>
             {% elif record.item_status == 3 %}
-            <span class="text-warning bg-neutral p-1 rounded-lg"
-                >Waiting for reselling.</span
-            >
+            <span class="text-warning bg-neutral p-1 rounded-lg">Waiting for reselling.</span>
             {% elif record.item_status == 4 %}
             <span class="text-error bg-neutral p-1 rounded-lg">Resold.</span>
             {% elif record.item_status == 5 %}
@@ -79,23 +72,19 @@
 
         <h2 class="text-gray-700 mt-2 text-xl font-bold">Payment History</h2>
         <div class="mt-4 grid grid-cols-3 gap-4">
-            {% if payments %} {% for payment in payments %}
-            <div
-                class="card p-4 mb-4 shadow-lg rounded-xl-important text-gray-700 {% if payment.money > 1000000 %} bg-error {% elif 10000 <= payment.money and payment.money <= 1000000 %} bg-warning {% else %} bg-success {% endif %}"
-            >
+            {% if payments %}
+            {% for payment in payments %}
+            <div class="card p-4 mb-4 shadow-lg rounded-xl-important text-gray-700 {% if payment.money > 1000000 %} bg-error {% elif 10000 <= payment.money and payment.money <= 1000000 %} bg-warning {% else %} bg-success {% endif %}">
                 <p class="text-lg font-semibold">
                     <span class="font-bold">{{ payment.user.username }}</span>
                     - Paid: <span class="font-mono">{{ payment.money }}฿</span>
                     <br />
-                    <span class="font-semibold"
-                        >{{ payment.timestamp|date:"D. M. jS Y, H:i"}}</span
-                    >
+                    <span class="font-semibold">{{ payment.timestamp|date:"D. M. jS Y, H:i"}}</span>
                 </p>
             </div>
-            {% endfor %} {% else %}
-            <div
-                class="card p-4 mb-4 shadow-lg rounded-xl-important bg-neutral text-gray-700 col-span-3 flex justify-center items-center"
-            >
+            {% endfor %}
+            {% else %}
+            <div class="card p-4 mb-4 shadow-lg rounded-xl-important bg-neutral text-gray-700 col-span-3 flex justify-center items-center">
                 <p class="text-lg text-error font-semibold">No payments yet.</p>
             </div>
             {% endif %}
@@ -103,46 +92,38 @@
 
         <div class="flex justify-between">
             <div class="card-actions justify-start my-2">
-                <a
-                    href="{% url 'record_index' pawnshop_id=record.pawnshop.id %}"
-                    class="btn btn-neutral hover:btn-primary"
-                    >Back to {{ record.pawnshop.name }}</a
-                >
+                <a href="{% url 'record_index' pawnshop_id=record.pawnshop.id %}" class="btn btn-neutral hover:btn-primary">
+                    Back to {{ record.pawnshop.name }}
+                </a>
             </div>
             <div class="card-actions justify-end my-2 space-x-2">
                 {% if record.item_status == 0 or record.item_status == 3 %}
                 <div class="card-actions justify-end my-2">
-                    <a
-                        href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}"
-                        class="btn btn-info hover:brightness-50"
-                    >
+                    <a href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-info hover:brightness-50">
                         Loan Repayment
                     </a>
                 </div>
                 {% elif record.item_status == 1 %}
                 <div class="card-actions justify-end my-2">
-                    <a
-                        href="{% url 'retrieve' pawnshop_id=record.pawnshop.id record_id=record.id %}"
-                        class="btn btn-success hover:brightness-50"
-                    >
+                    <a href="{% url 'retrieve' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-success hover:brightness-50">
                         Retrieve the item
                     </a>
                 </div>
-                {% endif %} {% if record.item_status == 3 %}
+                {% endif %}
+                {% if record.item_status == 3 %}
                 <div class="card-actions justify-end my-2">
-                    <a
-                        href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}"
-                        class="btn btn-error hover:brightness-50"
-                    >
+                    <a href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-error hover:brightness-50">
                         Resell this item
                     </a>
                 </div>
-                <a href="{% url 'edit_record' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-secondary">
-                    Edit Record
-                </a>
-                
+                {% endif %}
+                <div class="card-actions justify-end my-2">
+                    <a href="{% url 'edit_record' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-secondary">
+                        Edit Record
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-    {% endblock %}
 </div>
+{% endblock %}

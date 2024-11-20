@@ -1,13 +1,37 @@
-from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import Record, Payment, Pawnshop, Profile, LoanOffer
-from django.shortcuts import render, redirect
+from .models import Record, Pawnshop, Profile, LoanOffer, Payment, Resell
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from functools import wraps
+from datetime import datetime, date, timedelta
+
+
+def role_required(role):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            try:
+                user_profile = Profile.objects.get(user=request.user)
+                if user_profile.role != role:
+                    messages.warning(request, f"You do not have the permissions of {role} "
+                                              f"as you are the {user_profile.role}.")
+                    return redirect(request.META.get('HTTP_REFERER', 'index'))
+            except Profile.DoesNotExist:
+                messages.error(
+                    request, "Profile not found. Please contact support.")
+                return redirect(request.META.get('HTTP_REFERER', 'index'))
+            return view_func(request, *args, **kwargs)
+
+        return _wrapped_view
+
+    return decorator
 
 
 class RegisterView(View):
@@ -57,9 +81,11 @@ class PawnshopListView(View):
         else:
             pawnshops = Pawnshop.objects.all()
         context = {'pawnshops': pawnshops, 'query': query}
+        context = {'pawnshops': pawnshops, 'query': query}
         return render(request, 'records/pawnshop_list.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class CreatePawnshopView(View):
     """View to create a new pawnshop."""
 
@@ -130,6 +156,7 @@ class RecordDetail(View):
         return render(request, 'records/record_detail.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class CreateRecordView(View):
     """View to create a new record for a specific pawnshop."""
 
@@ -175,6 +202,15 @@ class CreateRecordView(View):
 def retrieveItem(request, pawnshop_id, record_id):
     """Retrieve item from record."""
     record = get_object_or_404(Record, pk=record_id, pawnshop_id=pawnshop_id)
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role != 'customer' or record.customer() != request.user:
+            messages.warning(
+                request, "You are not the customer of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+    except Profile.DoesNotExist:
+        messages.error(request, "Profile not found. Please contact support.")
+        return redirect(request.META.get('HTTP_REFERER', 'index'))
     print(record)
     record.item_status = 2
     record.active = False
@@ -205,3 +241,84 @@ class EditRecordView(View):
             messages.success(request, "Record updated successfully!")
             return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
         return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
+
+
+def monthly_statistics(request, pawnshop_id):
+    """View to display daily statistics for a specific month and pawnshop."""
+    pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+    month_input = request.GET.get('month', datetime.now().strftime('%Y-%m'))
+    try:
+        selected_date = datetime.strptime(month_input, '%Y-%m')
+    except ValueError:
+        selected_date = datetime.now()
+    selected_year = selected_date.year
+    selected_month = selected_date.month
+    first_day = date(selected_year, selected_month, 1)
+    if selected_month == 12:
+        last_day = date(selected_year + 1, 1, 1) - timedelta(days=1)
+    else:
+        last_day = date(selected_year, selected_month +
+                        1, 1) - timedelta(days=1)
+    first_day = timezone.make_aware(
+        datetime.combine(first_day, datetime.min.time()))
+    last_day = timezone.make_aware(
+        datetime.combine(last_day, datetime.min.time()))
+    records = Record.objects.filter(
+        pawnshop=pawnshop,
+        start_date__gte=first_day,
+        start_date__lte=last_day
+    )
+    payments = Payment.objects.filter(
+        record__pawnshop=pawnshop,
+        timestamp__gte=first_day,
+        timestamp__lte=last_day
+    )
+    resells = Resell.objects.filter(
+        record__pawnshop=pawnshop,
+        timestamp__gte=first_day,
+        timestamp__lte=last_day
+    )
+    payment_data = []
+    for payment in payments:
+        day = timezone.localtime(payment.timestamp).date()
+        payment_data.append({
+            'day': day,
+            'total': payment.money
+        })
+    resell_data = []
+    for resell in resells:
+        day = timezone.localtime(resell.timestamp).date()
+        resell_data.append({
+            'day': day,
+            'total': resell.money
+        })
+    income = {}
+    for entry in payment_data:
+        day = entry['day']
+        income[day] = income.get(day, 0) + entry['total']
+    for entry in resell_data:
+        day = entry['day']
+        income[day] = income.get(day, 0) + entry['total']
+    expense_data = []
+    for record in records:
+        day = timezone.localtime(record.start_date).date()
+        expense_data.append({
+            'day': day,
+            'total': record.loan_amount
+        })
+    expenses = {entry['day']: entry['total'] for entry in expense_data}
+    days = sorted(set(income.keys()).union(expenses.keys()))
+    income_chart_data = [income.get(day, 0) for day in days]
+    expense_chart_data = [expenses.get(day, 0) for day in days]
+    days_display = [day.strftime('%d %B %Y') for day in days]
+    selected_month_display = selected_date.strftime('%B %Y')
+
+    context = {
+        'pawnshop': pawnshop,
+        'selected_month': selected_date.strftime('%Y-%m'),
+        'days': days_display,
+        'income_chart_data': income_chart_data,
+        'expense_chart_data': expense_chart_data,
+        'selected_month_display': selected_month_display,
+    }
+    return render(request, 'records/monthly_statistics.html', context)

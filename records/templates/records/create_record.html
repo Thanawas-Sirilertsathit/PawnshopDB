@@ -27,7 +27,7 @@
             type="text"
             id="id_name"
             name="name"
-            class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-4 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             value="{{ form.name.value|default_if_none:'' }}"
             placeholder="Enter record name"
         />
@@ -42,7 +42,7 @@
         <textarea
             id="id_detail"
             name="detail"
-            class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-4 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             rows="1"
             value="{{ form.detail.value|default_if_none:'' }}"
             placeholder="Enter record detail"

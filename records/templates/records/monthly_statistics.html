@@ -1,0 +1,102 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">
+        Monthly Statistics for {{ pawnshop.name }}
+    </h1>
+    <div class="flex space-x-4">
+        <form method="get" class="mb-6">
+            <label for="month" class="font-semibold">Select Month:</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                value="{{ selected_month }}"
+                class="input input-bordered mx-2 bg-neutral text-primary"
+            />
+            <button type="submit" class="btn btn-secondary">View</button>
+        </form>
+        <div class="card-actions justify-start">
+            <a
+                href="{% url 'record_index' pawnshop_id=pawnshop.id %}"
+                class="btn btn-neutral hover:btn-primary"
+                >Back to {{ pawnshop.name }}</a
+            >
+        </div>
+    </div>
+    <div class="mt-8">
+        <canvas id="incomeExpenseChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const income_chart_data = {{ income_chart_data|safe }};
+    const expense_chart_data = {{ expense_chart_data|safe }};
+    const days = {{ days|safe }};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const incomeChartData = income_chart_data;
+        const expenseChartData = expense_chart_data;
+        const days_display = days;
+
+        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: days_display,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: incomeChartData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                    },
+                    {
+                        label: 'Expenses',
+                        data: expenseChartData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Income and Expenses for {{ pawnshop.name }} during {{ selected_month_display }}',
+                        font: {
+                            size: 18,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days',
+                            font: {
+                                size: 14,
+                            },
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amount (฿)',
+                            font: {
+                                size: 14,
+                            },
+                        },
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    });
+</script>
+
+{% endblock %}

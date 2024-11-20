@@ -1,14 +1,36 @@
-from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import Record, Payment, Pawnshop, Profile, LoanOffer, Payment, Resell
-from django.shortcuts import render, redirect
+from .models import Record, Pawnshop, Profile, LoanOffer, Payment, Resell
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from functools import wraps
 from datetime import datetime, date, timedelta
+
+
+def role_required(role):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            try:
+                user_profile = Profile.objects.get(user=request.user)
+                if user_profile.role != role:
+                    messages.warning(request, f"You do not have the permissions of {role} "
+                                              f"as you are the {user_profile.role}.")
+                    return redirect(request.META.get('HTTP_REFERER', 'index'))
+            except Profile.DoesNotExist:
+                messages.error(request, "Profile not found. Please contact support.")
+                return redirect(request.META.get('HTTP_REFERER', 'index'))
+            return view_func(request, *args, **kwargs)
+
+        return _wrapped_view
+
+    return decorator
 
 
 class RegisterView(View):
@@ -56,13 +78,14 @@ class PawnshopListView(View):
             pawnshops = Pawnshop.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
         else:
             pawnshops = Pawnshop.objects.all()
-        context = {'pawnshops': pawnshops,'query': query}
+        context = {'pawnshops': pawnshops, 'query': query}
         return render(request, 'records/pawnshop_list.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class CreatePawnshopView(View):
     """View to create a new pawnshop."""
-    
+
     def get(self, request):
         """Get form data."""
         form = PawnshopForm()
@@ -126,6 +149,7 @@ class RecordDetail(View):
         return render(request, 'records/record_detail.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class CreateRecordView(View):
     """View to create a new record for a specific pawnshop."""
 
@@ -164,13 +188,21 @@ class CreateRecordView(View):
                 is_staff=False
             )
             messages.success(request, "Record created successfully!")
-            return redirect('record_index', pawnshop_id = pawnshop.id)
+            return redirect('record_index', pawnshop_id=pawnshop.id)
         return render(request, 'records/create_record.html', {'form': form, 'pawnshop': pawnshop})
 
 
 def retrieveItem(request, pawnshop_id, record_id):
     """Retrieve item from record."""
     record = get_object_or_404(Record, pk=record_id, pawnshop_id=pawnshop_id)
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role != 'customer' or record.customer() != request.user:
+            messages.warning(request, "You are not the customer of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+    except Profile.DoesNotExist:
+        messages.error(request, "Profile not found. Please contact support.")
+        return redirect(request.META.get('HTTP_REFERER', 'index'))
     print(record)
     record.item_status = 2
     record.active = False
@@ -255,4 +287,3 @@ def monthly_statistics(request, pawnshop_id):
         'selected_month_display': selected_month_display,
     }
     return render(request, 'records/monthly_statistics.html', context)
-

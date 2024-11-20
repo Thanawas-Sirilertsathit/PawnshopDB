@@ -127,7 +127,7 @@ class Record(models.Model):
 
         # Close the record if payment exceed or equal to requirement
         if remaining_amount <= 0:
-            if self.item_status == 0:
+            if self.item_status == 0 or self.item_status == 3:
                 self.item_status = 1
             self.save()
 

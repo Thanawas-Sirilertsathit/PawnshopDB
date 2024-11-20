@@ -1,0 +1,98 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">
+        Yearly Report for {{ customer.user.username }} in {{ pawnshop.name }}
+    </h1>
+    <div class="flex space-x-4">
+        <form method="get" class="mb-6">
+            <label for="year" class="font-semibold">Select Year:</label>
+            <input
+                type="year"
+                id="year"
+                name="year"
+                value="{{selected_year}}"
+                class="input input-bordered mx-2 bg-neutral text-primary"
+            />
+            <button type="submit" class="btn btn-secondary">View</button>
+        </form>
+        <div class="card-actions justify-start">
+            <a
+                href="{% url 'record_index' pawnshop_id=pawnshop.id%}"
+                class="btn btn-neutral hover:btn-primary"
+            >
+                Back to {{ pawnshop.name }}
+            </a>
+        </div>
+    </div>
+    <div class="mt-8">
+        <canvas id="yearlyReportChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const loan_chart_data = {{ loan_chart_data|safe }};
+    const repayment_chart_data = {{ repayment_chart_data|safe }};
+    const months_display = {{ months|safe }};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('yearlyReportChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: months_display,
+                datasets: [
+                    {
+                        label: 'Loans',
+                        data: loan_chart_data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                    },
+                    {
+                        label: 'Repayments',
+                        data: repayment_chart_data,
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Loans and Repayments for {{ selected_year_display }}',
+                        font: {
+                            size: 18,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months',
+                            font: {
+                                size: 14,
+                            },
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amount (฿)',
+                            font: {
+                                size: 14,
+                            },
+                        },
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    });
+</script>
+{% endblock %}

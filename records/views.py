@@ -254,6 +254,5 @@ def monthly_statistics(request, pawnshop_id):
         'expense_chart_data': expense_chart_data,
         'selected_month_display': selected_month_display,
     }
-    print(context) # to be removed
     return render(request, 'records/monthly_statistics.html', context)
 

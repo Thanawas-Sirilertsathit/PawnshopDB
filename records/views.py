@@ -1,5 +1,5 @@
 from django.views import View
-from .models import Record, Payment, Pawnshop, Profile, LoanOffer, Payment, Resell
+from .models import Record, Pawnshop, Profile, LoanOffer, Payment, Resell
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm

@@ -9,6 +9,24 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from functools import wraps
+
+
+def role_required(role):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            try:
+                user_profile = Profile.objects.get(user=request.user)
+                if user_profile.role != role:
+                    messages.warning(request, "You do not have the required permissions.")
+                    return redirect(request.META.get('HTTP_REFERER', 'index'))
+            except Profile.DoesNotExist:
+                messages.error(request, "Profile not found. Please contact support.")
+                return redirect(request.META.get('HTTP_REFERER', 'index'))
+            return view_func(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
 
 
 class RegisterView(View):
@@ -60,16 +78,11 @@ class PawnshopListView(View):
         return render(request, 'records/pawnshop_list.html', context)
 
 
-@method_decorator(login_required, name="dispatch")
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class CreatePawnshopView(View):
     """View to create a new pawnshop."""
-
     def get(self, request):
         """Get form data."""
-        user_profile = Profile.objects.get(user=request.user)
-        if user_profile.role != "staff":
-            messages.warning(request, "This section is for staff only")
-            return redirect("index")
         form = PawnshopForm()
         return render(request, 'records/create_pawnshop.html', {'form': form})
 
@@ -131,6 +144,7 @@ class RecordDetail(View):
         return render(request, 'records/record_detail.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class CreateRecordView(View):
     """View to create a new record for a specific pawnshop."""
 

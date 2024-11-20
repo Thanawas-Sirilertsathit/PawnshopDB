@@ -1,13 +1,14 @@
-from django.shortcuts import render, get_object_or_404
 from django.views import View
 from .models import Record, Payment, Pawnshop, Profile, LoanOffer
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .forms import PawnshopForm, RecordForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 class RegisterView(View):
@@ -55,15 +56,20 @@ class PawnshopListView(View):
             pawnshops = Pawnshop.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
         else:
             pawnshops = Pawnshop.objects.all()
-        context = {'pawnshops': pawnshops,'query': query}
+        context = {'pawnshops': pawnshops, 'query': query}
         return render(request, 'records/pawnshop_list.html', context)
 
 
+@method_decorator(login_required, name="dispatch")
 class CreatePawnshopView(View):
     """View to create a new pawnshop."""
-    
+
     def get(self, request):
         """Get form data."""
+        user_profile = Profile.objects.get(user=request.user)
+        if user_profile.role != "staff":
+            messages.warning(request, "This section is for staff only")
+            return redirect("index")
         form = PawnshopForm()
         return render(request, 'records/create_pawnshop.html', {'form': form})
 
@@ -163,7 +169,7 @@ class CreateRecordView(View):
                 is_staff=False
             )
             messages.success(request, "Record created successfully!")
-            return redirect('record_index', pawnshop_id = pawnshop.id)
+            return redirect('record_index', pawnshop_id=pawnshop.id)
         return render(request, 'records/create_record.html', {'form': form, 'pawnshop': pawnshop})
 
 

@@ -47,6 +47,13 @@
                     {% endif %}
                 </ul>
                 <div class="flex justify-end space-x-4">
+                    {% if messages %}
+                        <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
                     <label for="disco-toggle" class="flex items-center cursor-pointer">
                         <span class="mr-2 text-primary">Disco Mode</span>
                         <input type="checkbox" id="disco-toggle" class="toggle toggle-primary" />

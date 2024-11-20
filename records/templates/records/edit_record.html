@@ -1,7 +1,14 @@
-{% extends 'base.html' %} {% block content %}
-<p class="text-5xl text-primary-content mb-4 text-center">
-    Create Record for {{ pawnshop.name }}
-</p>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-3xl mb-4">Edit Record for {{ pawnshop.name }}</h1>
+
+<form method="POST" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Render the form fields -->
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
 
 {% if messages %}
 <div

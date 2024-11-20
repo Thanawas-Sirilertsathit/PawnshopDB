@@ -52,16 +52,17 @@ class PawnshopListView(View):
         """Get all pawnshops, with optional search filtering."""
         query = request.GET.get('q')
         if query:
-            pawnshops = Pawnshop.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+            pawnshops = Pawnshop.objects.filter(
+                Q(name__icontains=query) | Q(description__icontains=query))
         else:
             pawnshops = Pawnshop.objects.all()
-        context = {'pawnshops': pawnshops,'query': query}
+        context = {'pawnshops': pawnshops, 'query': query}
         return render(request, 'records/pawnshop_list.html', context)
 
 
 class CreatePawnshopView(View):
     """View to create a new pawnshop."""
-    
+
     def get(self, request):
         """Get form data."""
         form = PawnshopForm()
@@ -102,15 +103,19 @@ class RecordDetail(View):
 
     def get(self, request, pawnshop_id, record_id):
         """Get specific record."""
-        record = get_object_or_404(Record, pk=record_id, pawnshop_id=pawnshop_id)
+        record = get_object_or_404(
+            Record, pk=record_id, pawnshop_id=pawnshop_id)
         accrued_interest = record.accrued_interest()
         total_due = record.total_due()
         remaining_loan = record.remaining_loan_amount()
         payments = Payment.objects.filter(record=record)
         overdue = record.is_overdue()
+
+        # Handle loan_staff gracefully
         staff = record.loan_staff()
+        staff_user = staff if staff else "No staff assigned"
+
         customer = record.customer()
-        print(record.item_status)
 
         context = {
             'record': record,
@@ -119,7 +124,7 @@ class RecordDetail(View):
             'remaining_loan': remaining_loan,
             'payments': payments,
             'overdue': overdue,
-            'staff': staff,
+            'staff': staff_user,  # Use the variable that accounts for None
             'customer': customer,
         }
         return render(request, 'records/record_detail.html', context)
@@ -163,7 +168,7 @@ class CreateRecordView(View):
                 is_staff=False
             )
             messages.success(request, "Record created successfully!")
-            return redirect('record_index', pawnshop_id = pawnshop.id)
+            return redirect('record_index', pawnshop_id=pawnshop.id)
         return render(request, 'records/create_record.html', {'form': form, 'pawnshop': pawnshop})
 
 
@@ -176,3 +181,27 @@ def retrieveItem(request, pawnshop_id, record_id):
     record.save()
     print(record.item_status)
     return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record_id)
+
+
+class EditRecordView(View):
+    """View to edit an existing record for a specific pawnshop."""
+
+    def get(self, request, pawnshop_id, record_id):
+        """Get form pre-filled with the record's current data."""
+        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
+        # Pre-fill the form with record data
+        form = RecordForm(instance=record)
+        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
+
+    def post(self, request, pawnshop_id, record_id):
+        """Save changes to the record."""
+        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
+        # Bind the form to the existing record
+        form = RecordForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()  # Save the changes
+            messages.success(request, "Record updated successfully!")
+            return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
+        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})

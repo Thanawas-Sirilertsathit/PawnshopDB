@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from functools import wraps
 from datetime import datetime, date, timedelta
+from collections import defaultdict
 
 
 def role_required(role):
@@ -287,3 +288,61 @@ def monthly_statistics(request, pawnshop_id):
         'selected_month_display': selected_month_display,
     }
     return render(request, 'records/monthly_statistics.html', context)
+
+
+def yearly_report(request, pawnshop_id):
+    """View to display yearly statistics for loans and repayments."""
+    year_input = request.GET.get('year', datetime.now().year)
+    try:
+        selected_year = int(year_input)
+    except ValueError:
+        selected_year = datetime.now().year
+
+    customer = get_object_or_404(Profile, user=request.user)
+
+    first_day = timezone.make_aware(datetime(selected_year, 1, 1))
+    last_day = timezone.make_aware(datetime(selected_year, 12, 31, 23, 59, 59))
+    pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
+
+    loans = Record.objects.filter(
+        loanoffer__user=customer.user,
+        loanoffer__is_staff=False,
+        start_date__gte=first_day,
+        start_date__lte=last_day,
+        pawnshop=pawnshop
+    )
+
+    repayments = Payment.objects.filter(
+        record__loanoffer__user=customer.user,
+        record__loanoffer__is_staff=False,
+        record__pawnshop=pawnshop,
+        timestamp__gte=first_day,
+        timestamp__lte=last_day
+    )
+
+    loans_by_month = defaultdict(int)
+    for loan in loans:
+        month = loan.start_date.strftime('%Y-%m')
+        loans_by_month[month] += loan.loan_amount
+
+    repayments_by_month = defaultdict(int)
+    for repayment in repayments:
+        month = repayment.timestamp.strftime('%Y-%m')
+        repayments_by_month[month] += repayment.money
+    months = [datetime(selected_year, i, 1).strftime('%Y-%m') for i in range(1, 13)]
+    loan_chart_data = [loans_by_month.get(month, 0) for month in months]
+    repayment_chart_data = [repayments_by_month.get(month, 0) for month in months]
+    months_display = [datetime.strptime(month, '%Y-%m').strftime('%B') for month in months]
+    selected_year_display = str(selected_year)
+
+    context = {
+        'customer': customer,
+        'selected_year': selected_year,
+        'months': months_display,
+        'loan_chart_data': loan_chart_data,
+        'repayment_chart_data': repayment_chart_data,
+        'selected_year_display': selected_year_display,
+        'pawnshop': pawnshop,
+    }
+
+    return render(request, 'records/yearly_report.html', context)

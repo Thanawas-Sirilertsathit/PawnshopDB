@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-    {% endfor %}
+    {% endfor %} {% if request.user.profile.role == "staff" %}
     <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
         <div class="card-body text-center">
             <h2 class="text-3xl text-white">+</h2>
@@ -43,5 +43,5 @@
             </div>
         </div>
     </div>
-    {% endblock %}
+    {% endif %} {% endblock %}
 </div>

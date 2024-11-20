@@ -3,13 +3,23 @@
     <h1 class="text-3xl text-primary-content mb-4">
         Pawnshop Records in {{pawnshop.name}}
     </h1>
-    <div>
+    <div class="flex space-x-4">
         <a
             href="{% url 'monthly_statistics' pawnshop_id=pawnshop.id%}"
             class="btn btn-info"
         >
             Statistics
         </a>
+        {% if request.user.profile.role == "customer" %}
+        <div>
+            <a
+                href="{% url 'yearly_report' pawnshop_id=pawnshop.id%}"
+                class="btn btn-success"
+            >
+                Yearly Report
+            </a>
+        </div>
+        {% endif %}
     </div>
     <form
         method="get"
@@ -27,6 +37,7 @@
     </form>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% if request.user.profile.role == "staff" %}
     <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
         <div class="card-body text-center">
             <h2 class="text-3xl text-white">+</h2>
@@ -41,7 +52,7 @@
             </div>
         </div>
     </div>
-    {% for record in records %}
+    {% endif %} {% for record in records %}
     <div
         class="card shadow-lg p-4 {% if record.item_status == 0 %} bg-secondary {% elif record.item_status == 1 %} bg-accent {% elif record.item_status == 2 %} bg-success {% elif record.item_status == 3 %} bg-warning {% elif record.item_status == 4 %} bg-info {% elif record.item_status == 5 %} bg-error {% endif %}"
     >

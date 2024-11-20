@@ -3,38 +3,44 @@
     <div class="card-body">
         <h1 class="text-3xl text-primary-content mt-2">{{ record.name }}</h1>
         <p class="text-gray-700 mt-2">{{ record.detail }}</p>
-        <p class="text-gray-700 mt-2">
-            <strong>Loan Amount:</strong> {{ record.loan_amount }} ฿
-        </p>
-        <p class="text-gray-700 mt-2">
-            <strong>Accrued Interest:</strong> {{ accrued_interest }} ฿
-        </p>
-        <p class="text-gray-700 mt-2">
-            <strong>Total Due:</strong> {{ total_due }} ฿
-        </p>
-        <p class="text-gray-700 mt-2">
-            <strong>Remaining Loan:</strong> {{ remaining_loan }} ฿
-        </p>
+        <div class="flex justify-between">
+            <p class="text-gray-700 mt-2">
+                <strong>Loan Amount:</strong> {{ record.loan_amount }} ฿
+            </p>
+            <p class="text-gray-700 mt-2">
+                <strong>Accrued Interest:</strong> {{ accrued_interest }} ฿
+            </p>
+        </div>
+        <div class="flex justify-between">
+            <p class="text-gray-700 mt-2">
+                <strong>Total Due:</strong> {{ total_due }} ฿
+            </p>
+            <p class="text-gray-700 mt-2">
+                <strong>Remaining Loan:</strong> {{ remaining_loan }} ฿
+            </p>
+        </div>
         <p class="text-gray-700 mt-2">
             <strong>Contract period:</strong>
             {{ record.start_date|date:"D. M. jS Y"}} -
             {{record.end_date|date:"D. M. jS Y" }}
         </p>
-        <p class="text-gray-700 mt-2">
-            <strong>Record Status:</strong> {% if record.active %}<span
-                class="text-success"
-                >Active</span
-            >
-            {%else%}<span class="text-error">Closed</span>{% endif %}
-        </p>
-        <p class="text-gray-700 mt-2">
-            <strong>Overdue Status:</strong>
-            {% if record.is_overdue %}
-            <span class="text-error">Overdue</span>
-            {% else %}
-            <span class="text-success">On Time</span>
-            {% endif %}
-        </p>
+        <div class="flex justify-between">
+            <p class="text-gray-700 mt-2">
+                <strong>Record Status:</strong> {% if record.active %}<span
+                    class="text-success"
+                    >Active</span
+                >
+                {%else%}<span class="text-error">Closed</span>{% endif %}
+            </p>
+            <p class="text-gray-700 mt-2">
+                <strong>Overdue Status:</strong>
+                {% if record.is_overdue %}
+                <span class="text-error">Overdue</span>
+                {% else %}
+                <span class="text-success">On Time</span>
+                {% endif %}
+            </p>
+        </div>
         <p class="text-gray-700 mt-2">
             <strong>Item Status:</strong>
             {% if record.item_status == 0 %}
@@ -120,7 +126,7 @@
                         Retrieve the item
                     </a>
                 </div>
-                {%endif%} {% if record.item_status == 3 %}
+                {% endif %} {% if record.item_status == 3 %}
                 <div class="card-actions justify-end my-2">
                     <a
                         href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}"

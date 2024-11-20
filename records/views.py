@@ -213,14 +213,14 @@ def monthly_statistics(request, pawnshop_id):
     )
     payment_data = []
     for payment in payments:
-        day = payment.timestamp.date()
+        day = timezone.localtime(payment.timestamp).date()
         payment_data.append({
             'day': day,
             'total': payment.money
         })
     resell_data = []
     for resell in resells:
-        day = resell.timestamp.date()
+        day = timezone.localtime(resell.timestamp).date()
         resell_data.append({
             'day': day,
             'total': resell.money
@@ -234,7 +234,7 @@ def monthly_statistics(request, pawnshop_id):
         income[day] = income.get(day, 0) + entry['total']
     expense_data = []
     for record in records:
-        day = record.start_date.date()
+        day = timezone.localtime(record.start_date).date()
         expense_data.append({
             'day': day,
             'total': record.loan_amount

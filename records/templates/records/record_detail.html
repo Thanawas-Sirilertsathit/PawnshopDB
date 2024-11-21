@@ -110,7 +110,8 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if record.item_status == 3 % and request.user == staff %}
+                {% if record.item_status == 3 and request.user == staff %}
+
                 <div class="card-actions justify-end my-2">
                     <a href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-error hover:brightness-50">
                         Resell this item

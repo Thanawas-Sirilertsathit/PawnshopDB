@@ -76,8 +76,14 @@ npm i -D daisyui@latest
     ```
 
 11. Run server
+
     ```bash
     python manage.py runserver
+    ```
+
+12. For make sure run tailwind build again
+    ```bash
+    python manage.py tailwind build
     ```
 
 ## Tailwind Modification (For devs)
@@ -109,13 +115,13 @@ python manage.py tailwind build
 
 ## Migrate (For devs)
 
-- If you update model. After run this please also do the following command below.
+-   If you update model. After run this please also do the following command below.
 
 ```bash
 python manage.py makemigrations
 ```
 
-- If your friend update model.
+-   If your friend update model.
 
 ```bash
 python manage.py migrate

@@ -16,11 +16,16 @@ COPY ./requirements.txt .
 # Install system dependencies and Node.js
 RUN apk add --no-cache \
     build-base \
-    mariadb-dev \
+    python3 \
     python3-dev \
-    py3-pip \
+    mariadb-dev \
+    bash \
+    curl \
+    nodejs \
     npm \
-    && npm install -g npm@latest
+    pkgconfig
+
+ENV NPM_BIN_PATH=/usr/bin/npm
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

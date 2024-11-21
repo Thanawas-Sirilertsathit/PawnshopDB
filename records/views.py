@@ -301,28 +301,36 @@ def monthly_statistics(request, pawnshop_id):
     return render(request, 'records/monthly_statistics.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
 class EditRecordView(View):
     """View to edit an existing record for a specific pawnshop."""
 
     def get(self, request, pawnshop_id, record_id):
-        """Get form pre-filled with the record's current data."""
-        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
-        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
-        # Pre-fill the form with record data
+        record = get_object_or_404(Record, pk=record_id)
+        if record.loan_staff() != request.user:
+            messages.warning(request, f"You are not the staff of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+
         form = RecordForm(instance=record)
-        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
+        return render(request, 'records/edit_record.html', {'form': form, 'record': record})
 
     def post(self, request, pawnshop_id, record_id):
-        """Save changes to the record."""
-        pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
-        record = get_object_or_404(Record, pk=record_id, pawnshop=pawnshop)
-        # Bind the form to the existing record
+        record = get_object_or_404(Record, pk=record_id)
+        if record.loan_staff() != request.user:
+            messages.warning(request, f"You are not the staff of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+
         form = RecordForm(request.POST, instance=record)
         if form.is_valid():
-            form.save()  # Save the changes
-            messages.success(request, "Record updated successfully!")
+            update_record = form.save(commit=False)
+            update_record.user = request.user
+            update_record.record = record
+            update_record.save()
+
+            messages.success(request, "Record update successfully.")
             return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
-        return render(request, 'records/edit_record.html', {'form': form, 'pawnshop': pawnshop, 'record': record})
+
+        return render(request, 'records/edit_record.html', {'form': form, 'record': record})
 
 
 def yearly_report(request, pawnshop_id):

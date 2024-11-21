@@ -97,20 +97,20 @@
                 </a>
             </div>
             <div class="card-actions justify-end my-2 space-x-2">
-                {% if record.item_status == 0 or record.item_status == 3 %}
+                {% if request.user == customer and record.item_status == 0 or record.item_status == 3 and request.user == customer %}
                 <div class="card-actions justify-end my-2">
                     <a href="{% url 'create_payment' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-info hover:brightness-50">
                         Loan Repayment
                     </a>
                 </div>
-                {% elif record.item_status == 1 %}
+                {% elif record.item_status == 1 and request.user == customer %}
                 <div class="card-actions justify-end my-2">
                     <a href="{% url 'retrieve' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-success hover:brightness-50">
                         Retrieve the item
                     </a>
                 </div>
                 {% endif %}
-                {% if record.item_status == 3 %}
+                {% if record.item_status == 3 % and request.user == staff %}
                 <div class="card-actions justify-end my-2">
                     <a href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-error hover:brightness-50">
                         Resell this item

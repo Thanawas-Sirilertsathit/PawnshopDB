@@ -2,6 +2,16 @@
 
 A web application for managing pawnshop records, items and transactions powered by Django.
 
+## Install via Docker
+
+1. Build docker compose
+
+    ```bash
+    docker compose up --build
+    ```
+
+2. Open 127.0.0.1:8000 in your browser once docker compose completely built
+
 ## How to install
 
 1. Create python virtual environment

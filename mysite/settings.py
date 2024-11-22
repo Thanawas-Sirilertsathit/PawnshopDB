@@ -129,7 +129,7 @@ TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-NPM_BIN_PATH = config('PATH_TO_NPM', default='')
+NPM_BIN_PATH = config('NPM_BIN_PATH', default='')
 
 
 LOGIN_URL = '/records/login'

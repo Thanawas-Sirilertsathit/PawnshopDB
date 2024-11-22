@@ -10,7 +10,7 @@ services:
             MYSQL_USER: DATABASE_USER
             MYSQL_PASSWORD: DATABASE_PASSWORD
         ports:
-            - '3306:3306'
+            - '3307:3306'
         volumes:
             - db_data:/var/lib/mysql
 
@@ -27,17 +27,11 @@ services:
             DATABASE_NAME: DATABASE_NAME
             DATABASE_USER: DATABASE_USER
             DATABASE_PASSWORD: DATABASE_PASSWORD
-            DATABASE_HOST: DATABASE_HOST
-            DATABASE_PORT: DATABASE_PORT
+            DATABASE_HOST: db
+            DATABASE_PORT: 3306
+            NPM_BIN_PATH: NPM_BIN_PATH
         ports:
             - '8000:8000'
-        volumes:
-            - .:/app
-        command: >
-            sh -c "python manage.py migrate &&
-                   python manage.py collectstatic --noinput &&
-                   python manage.py runserver 0.0.0.0:8000 &&
-                   python manage.py tailwind build"
 
 volumes:
     db_data:

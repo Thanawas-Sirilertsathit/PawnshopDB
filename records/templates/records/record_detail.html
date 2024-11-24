@@ -95,7 +95,7 @@
             
                 {% if request.user == staff%}
                 <div class="card-actions justify-end my-2">
-                    <a href="{% url 'edit_record' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-secondary">
+                    <a href="{% url 'edit_record' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-primary hover:brightness-50">
                         Edit Record
                     </a>
                 </div>

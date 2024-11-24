@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from functools import wraps
 from datetime import datetime, date, timedelta
 from collections import defaultdict
+from django.contrib.auth.models import User
 
 
 def role_required(role):
@@ -312,7 +313,8 @@ class EditRecordView(View):
             return redirect(request.META.get('HTTP_REFERER', 'index'))
 
         form = EditRecordForm(instance=record)
-        return render(request, 'records/edit_record.html', {'form': form, 'record': record})
+        staff_list = User.objects.filter(profile__role='staff')
+        return render(request, 'records/edit_record.html', {'form': form, 'record': record, 'staff_list': staff_list})
 
     def post(self, request, pawnshop_id, record_id):
         record = get_object_or_404(Record, pk=record_id)
@@ -323,14 +325,26 @@ class EditRecordView(View):
         form = EditRecordForm(request.POST, instance=record)
         if form.is_valid():
             update_record = form.save(commit=False)
+            staff_id = request.POST.get('staff')
+            if staff_id:
+                try:
+                    update_record.staff = User.objects.get(pk=staff_id)
+                except User.DoesNotExist:
+                    messages.error(
+                        request, "The selected staff does not exist.")
+                    return render(request, 'records/edit_record.html', {
+                        'form': form,
+                        'record': record,
+                        'staff_list': User.objects.filter(profile__role="staff")
+                    })
             update_record.user = request.user
             update_record.record = record
             update_record.save()
 
             messages.success(request, "Record update successfully.")
             return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
-
-        return render(request, 'records/edit_record.html', {'form': form, 'record': record})
+        staff_list = User.objects.filter(profile__role='staff')
+        return render(request, 'records/edit_record.html', {'form': form, 'record': record, 'staff_list': staff_list})
 
 
 def yearly_report(request, pawnshop_id):

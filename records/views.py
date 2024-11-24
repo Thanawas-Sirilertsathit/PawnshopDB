@@ -2,7 +2,7 @@ from django.views import View
 from .models import Record, Pawnshop, Profile, LoanOffer, Payment, Resell
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from .forms import PawnshopForm, RecordForm
+from .forms import PawnshopForm, RecordForm, EditRecordForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -311,7 +311,7 @@ class EditRecordView(View):
             messages.warning(request, f"You are not the staff of this record.")
             return redirect(request.META.get('HTTP_REFERER', 'index'))
 
-        form = RecordForm(instance=record)
+        form = EditRecordForm(instance=record)
         return render(request, 'records/edit_record.html', {'form': form, 'record': record})
 
     def post(self, request, pawnshop_id, record_id):
@@ -320,7 +320,7 @@ class EditRecordView(View):
             messages.warning(request, f"You are not the staff of this record.")
             return redirect(request.META.get('HTTP_REFERER', 'index'))
 
-        form = RecordForm(request.POST, instance=record)
+        form = EditRecordForm(request.POST, instance=record)
         if form.is_valid():
             update_record = form.save(commit=False)
             update_record.user = request.user

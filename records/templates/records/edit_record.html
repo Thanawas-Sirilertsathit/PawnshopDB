@@ -5,150 +5,22 @@
 
 <form method="POST" class="form">
     {% csrf_token %}
-    {{ form.as_p }}  <!-- Render the form fields -->
-
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+    {{ form.as_p }} <!-- Render the form fields -->
+    
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary w-full py-3 rounded-lg text-white font-semibold bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark">
+            Save Changes
+        </button>
+    </div>
 </form>
 
-</p>
-
 {% if messages %}
-<div
-    class="alert alert-success mb-6 p-4 rounded-lg bg-success border-l-4 border-green-500 text-green-800"
->
+<div class="alert alert-success mb-6 p-4 rounded-lg bg-success border-l-4 border-green-500 text-green-800">
     {% for message in messages %}
     <p>{{ message }}</p>
     {% endfor %}
 </div>
 {% endif %}
-
-<form
-    method="POST"
-    class="max-w-5xl mx-auto rounded-xl p-8 bg-accent shadow-lg space-y-6"
->
-    {% csrf_token %}
-
-    <div class="form-group mb-4 flex gap-4">
-        <label for="id_name" class="block text-white text-lg font-semibold mt-2"
-            >Name</label
-        >
-        <input
-            type="text"
-            id="id_name"
-            name="name"
-            class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            value="{{ form.name.value|default_if_none:'' }}"
-            placeholder="Enter record name"
-        />
-    </div>
-
-    <div class="form-group mb-4 flex gap-4">
-        <label
-            for="id_detail"
-            class="block text-white text-lg font-semibold mt-2"
-            >Detail</label
-        >
-        <textarea
-            id="id_detail"
-            name="detail"
-            class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            rows="1"
-            value="{{ form.detail.value|default_if_none:'' }}"
-            placeholder="Enter record detail"
-        ></textarea>
-    </div>
-
-    <div class="form-group mb-4 flex gap-4">
-        <label
-            for="start-date"
-            class="block text-white text-lg font-semibold mt-2"
-            >Start Date</label
-        >
-        <input
-            type="text"
-            id="start-date"
-            name="start_date"
-            value="{{ form.start_date.value|date:'Y-m-d'}}"
-            class="input input-bordered w-min bg-neutral text-primary"
-            placeholder="Select Start Date"
-        />
-    </div>
-
-    <div class="form-group mb-4 flex gap-4">
-        <label
-            for="end-date"
-            class="block text-white text-lg font-semibold mt-2"
-            >End Date</label
-        >
-        <input
-            type="text"
-            id="end-date"
-            name="end_date"
-            value="{{form.end_date.value|date:'Y-m-d'}}"
-            class="input input-bordered w-min bg-neutral text-primary"
-            placeholder="Select End Date"
-        />
-    </div>
-
-    <div class="form-group mb-4 flex gap-4">
-        <label
-            for="id_loan_amount"
-            class="block text-white text-lg font-semibold mt-2"
-            >Loan Amount (฿)</label
-        >
-        <input
-            type="number"
-            id="id_loan_amount"
-            name="loan_amount"
-            min="0"
-            step="1"
-            value="{{ form.loan_amount.value|default:'' }}"
-            class="input input-bordered w-min bg-neutral text-primary"
-            placeholder="Enter Loan Amount"
-        />
-    </div>
-
-    <div class="form-group mb-4 flex gap-4">
-        <label
-            for="id_interest_rate"
-            class="block text-white text-lg font-semibold mt-2"
-            >Interest Rate (%)</label
-        >
-        <input
-            type="number"
-            id="id_interest_rate"
-            name="interest_rate"
-            min="0"
-            max="100"
-            step="0.1"
-            value="{{ form.interest_rate.value|default:5 }}"
-            class="input input-bordered w-min bg-neutral text-primary"
-            placeholder="Enter Interest Rate"
-        />
-    </div>
-    <div class="form-group mb-4 flex gap-4">
-        <label
-            for="id_customer"
-            class="block text-white text-lg font-semibold mt-2"
-            >Select customer</label
-        >
-        {{ form.customer }} {% if form.customer.errors %}
-        <div class="text-error text-sm mt-2">
-            {% for error in form.customer.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <div class="form-group text-center">
-        <button
-            type="submit"
-            class="btn btn-primary w-full py-3 rounded-lg text-white font-semibold bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark"
-        >
-            Create Record
-        </button>
-    </div>
-</form>
 
 <link
     rel="stylesheet"
@@ -156,88 +28,19 @@
 />
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    flatpickr('#start-date', {
+    flatpickr('#id_start_date', {
         dateFormat: 'Y-m-d',
         altInput: true,
         altFormat: 'F j, Y',
         allowInput: true,
         disableMobile: 'true',
     });
-    flatpickr('#end-date', {
+    flatpickr('#id_end_date', {
         dateFormat: 'Y-m-d',
         altInput: true,
         altFormat: 'F j, Y',
         allowInput: true,
         disableMobile: 'true',
-    });
-</script>
-<script>
-    const themes = [
-        'my-light',
-        'my-dark',
-        'my-candy',
-        'my-sea',
-        'my-desert',
-        'my-magic',
-    ];
-    let themeIndex = 0;
-
-    function switchTheme() {
-        themeIndex = (themeIndex + 1) % themes.length;
-        const newTheme = themes[themeIndex];
-        document.documentElement.setAttribute('data-theme', newTheme);
-        document.cookie = 'theme=' + newTheme + '; path=/';
-    }
-    const nameInput = document.getElementById('id_name');
-    const detailInput = document.getElementById('id_detail');
-    const startDateInput = document.getElementById('start-date');
-    const endDateInput = document.getElementById('end-date');
-    const loanInput = document.getElementById('id_loan_amount');
-    const interestInput = document.getElementById('id_interest_rate');
-
-    let isdiscoToggleOn = false;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const discoToggle = document.querySelector('#disco-toggle');
-
-        const savedState = localStorage.getItem('isDiscoToggleOn');
-        if (savedState !== null) {
-            isdiscoToggleOn = JSON.parse(savedState);
-            if (discoToggle) {
-                discoToggle.checked = isdiscoToggleOn;
-            }
-        }
-
-        if (discoToggle) {
-            discoToggle.addEventListener('change', () => {
-                isdiscoToggleOn = discoToggle.checked;
-                localStorage.setItem(
-                    'isDiscoToggleOn',
-                    JSON.stringify(isdiscoToggleOn)
-                ); // Store state in localStorage
-            });
-        }
-    });
-
-    // Update the state when the checkbox is toggled
-
-    [
-        nameInput,
-        detailInput,
-        startDateInput,
-        endDateInput,
-        loanInput,
-        interestInput,
-    ].forEach((input) => {
-        if (input) {
-            // Ensure the input element exists
-            input.addEventListener('input', () => {
-                // Check if Disco Mode is enabled before switching theme
-                if (isdiscoToggleOn) {
-                    switchTheme();
-                }
-            });
-        }
     });
 </script>
 {% endblock %}

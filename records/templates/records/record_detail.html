@@ -93,7 +93,7 @@
                 </div>
                 {% endif %}
             
-                {% if record.staff == request.user %}
+                {% if request.user == staff%}
                 <div class="card-actions justify-end my-2">
                     <a href="{% url 'edit_record' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-secondary">
                         Edit Record

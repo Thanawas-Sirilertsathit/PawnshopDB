@@ -1,18 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="text-3xl mb-4">Edit Record for {{ pawnshop.name }}</h1>
+<div class="container mx-auto">
+    <h1 class="text-3xl mb-4">Edit Record </h1>
 
-<form method="POST" class="form">
-    {% csrf_token %}
-    {{ form.as_p }} <!-- Render the form fields -->
-    
-    <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary w-full py-3 rounded-lg text-white font-semibold bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark">
-            Save Changes
-        </button>
+    <!-- Status Section -->
+    <div class="status-section mb-6 p-4 bg-gray-100 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-2">Record Status</h2>
+        <p>
+            <strong>Is Active:</strong> 
+            <span class="{% if record.active %}text-green-600{% else %}text-red-600{% endif %}">
+                {{ record.active|yesno:"Active,Inactive" }}
+            </span>
+        </p>
+        <p>
+            <strong>Item Status:</strong> 
+            <span class="badge {% if record.item_status == 0 %}badge-success{% elif record.item_status == 1 %}badge-warning{% else %}badge-danger{% endif %}">
+                {% if record.item_status == 0 %}In Pawnshop{% elif record.item_status == 1 %}Waiting for Retrieval{% elif record.item_status == 2 %}Retrieved{% elif record.item_status == 3 %}Waiting for Reselling{% elif record.item_status == 4 %}Resold{% else %}Lost{% endif %}
+            </span>
+        </p>
+
+        <strong>Overdue Status:</strong>
+        <span class="{% if is_overdue %}text-red-600{% else %}text-green-600{% endif %}">
+            {% if is_overdue %}Overdue{% else %}On Time{% endif %}
+        </span>
+    </p>
+</div>
+
+
+
+
+    <div class="status-descriptions mb-6 p-4 bg-gray-200 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-2">Item Status Descriptions</h2>
+        <ul class="list-disc pl-6">
+            <li><strong>0:</strong> Item is in Pawnshop</li>
+            <li><strong>1:</strong> Waiting for Retrieval</li>
+            <li><strong>2:</strong> Retrieved (then close the record)</li>
+            <li><strong>3:</strong> Waiting for Reselling</li>
+            <li><strong>4:</strong> Resold (then close the record)</li>
+            <li><strong>5:</strong> Lost</li>
+        </ul>
     </div>
-</form>
+
+
+
+
+
+    <form method="POST" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary w-full py-3 rounded-lg text-white font-semibold bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark">
+                Save Changes
+            </button>
+        </div>
+    </form>
+
+
 
 {% if messages %}
 <div class="alert alert-success mb-6 p-4 rounded-lg bg-success border-l-4 border-green-500 text-green-800">
@@ -21,6 +66,7 @@
     {% endfor %}
 </div>
 {% endif %}
+
 
 <link
     rel="stylesheet"
@@ -43,4 +89,82 @@
         disableMobile: 'true',
     });
 </script>
+
+
+
+
+<script>
+    const themes = [
+        'my-light',
+        'my-dark',
+        'my-candy',
+        'my-sea',
+        'my-desert',
+        'my-magic',
+    ];
+    let themeIndex = 0;
+
+    function switchTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        const newTheme = themes[themeIndex];
+        document.documentElement.setAttribute('data-theme', newTheme);
+        document.cookie = 'theme=' + newTheme + '; path=/';
+    }
+    const nameInput = document.getElementById('id_name');
+    const detailInput = document.getElementById('id_detail');
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    const loanInput = document.getElementById('id_loan_amount');
+    const interestInput = document.getElementById('id_interest_rate');
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const discoToggle = document.querySelector('#disco-toggle');
+
+        const savedState = localStorage.getItem('isDiscoToggleOn');
+        if (savedState !== null) {
+            isdiscoToggleOn = JSON.parse(savedState);
+            if (discoToggle) {
+                discoToggle.checked = isdiscoToggleOn;
+            }
+        }
+
+        if (discoToggle) {
+            discoToggle.addEventListener('change', () => {
+                isdiscoToggleOn = discoToggle.checked;
+                localStorage.setItem(
+                    'isDiscoToggleOn',
+                    JSON.stringify(isdiscoToggleOn)
+                ); // Store state in localStorage
+            });
+        }
+    });
+
+    // Update the state when the checkbox is toggled
+
+    [
+        nameInput,
+        detailInput,
+        startDateInput,
+        endDateInput,
+        loanInput,
+        interestInput,
+    ].forEach((input) => {
+        if (input) {
+            // Ensure the input element exists
+            input.addEventListener('input', () => {
+                // Check if Disco Mode is enabled before switching theme
+                if (isdiscoToggleOn) {
+                    switchTheme();
+                }
+            });
+        }
+    });
+</script>
+
+
+
 {% endblock %}
+
+

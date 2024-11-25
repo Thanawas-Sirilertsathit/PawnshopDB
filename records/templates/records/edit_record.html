@@ -57,9 +57,7 @@
                 name="detail"
                 class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 rows="1"
-                value="{{ form.detail.value|default_if_none:'' }}"
-                placeholder="Enter record detail"
-            ></textarea>
+                placeholder="Enter record detail">{{ form.detail.value|default_if_none:record.detail }}</textarea>
         </div>
 
         <div class="form-group mb-4 flex gap-4">
@@ -106,7 +104,7 @@
                 name="loan_amount"
                 min="0"
                 step="1"
-                value="{{ form.loan_amount.value|default:'' }}"
+                value="{{ form.loan_amount.value|default:record.loan_amount }}"
                 class="input input-bordered w-min bg-neutral text-primary"
                 placeholder="Enter Loan Amount"
             />

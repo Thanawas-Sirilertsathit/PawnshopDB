@@ -178,10 +178,10 @@
         </div>
 
 
-        <div class="form-group text-center">
-            <button type="submit" class="btn btn-secondary w-full py-3 rounded-lg text-white font-semibold hover:btn-primary focus:outline-none focus:ring-2 focus:ring-primary-dark">
-                Save Changes
-            </button>
+        <div class="form-group text-center flex gap-4 justify-center">
+            <button type="submit" class="btn btn-secondary py-3 rounded-lg">Save Changes</button>
+            <a href="{% url 'record_detail' pawnshop_id=record.pawnshop_id record_id=record.id %}" class="btn btn-primary py-3 rounded-lg">Back to Record Detail</a>
+
         </div>
     </form>
 

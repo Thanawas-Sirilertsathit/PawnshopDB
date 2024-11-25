@@ -125,22 +125,22 @@ class RecordIndex(View):
                 current_status = int(status_filter)
                 if current_status < 0 or current_status > 5:
                     messages.error(request, "Invalid Status")
-                    return redirect('record_index')
+                    return redirect('record_index', pawnshop_id=pawnshop_id)
                 active_records = active_records.filter(item_status=status_filter)
             except ValueError:
                 messages.error(request, "Invalid Status")
-                return redirect('record_index')
+                return redirect('record_index', pawnshop_id=pawnshop_id)
 
         if month_filter:
             try:
                 selected_month = int(month_filter)
                 if selected_month < 1 or selected_month > 12:
                     messages.error(request, "Invalid Month")
-                    return redirect('record_index')
+                    return redirect('record_index', pawnshop_id=pawnshop_id)
                 active_records = [record for record in active_records if record.end_date.month == selected_month]
             except ValueError:
                 messages.error(request, "Invalid Month")
-                return redirect('record_index')
+                return redirect('record_index', pawnshop_id=pawnshop_id)
 
         context = {
             'pawnshop': pawnshop,

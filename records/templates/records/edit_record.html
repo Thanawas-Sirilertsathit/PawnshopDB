@@ -164,16 +164,32 @@
 
 
         <div class="form-group mb-4 flex gap-4">
-            <label for="id_item_status" class="block  text-white text-lg font-semibold mt-2">Item Status</label>
+            <label for="id_item_status" class="block text-white text-lg font-semibold mt-2">Item Status</label>
             <select name="item_status" id="id_item_status" class="input input-bordered block bg-neutral w-min rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                <option value="0" {% if record.item_status == 0 %}selected{% endif %}>In Pawnshop</option>
-                <option value="1" {% if record.item_status == 1 %}selected{% endif %}>Waiting for Retrieval</option>
-                <option value="2" {% if record.item_status == 2 %}selected{% endif %}>Retrieved</option>
-                <option value="3" {% if record.item_status == 3 %}selected{% endif %}>Waiting for Reselling</option>
-                <option value="4" {% if record.item_status == 4 %}selected{% endif %}>Resold</option>
-                <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
+                {% if record.item_status == 0 %}
+                    <!-- Only show options "In Pawnshop" and "Lost" -->
+                    <option value="0" {% if record.item_status == 0 %}selected{% endif %}>In Pawnshop</option>
+                    <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
+                {% elif record.item_status == 1 %}
+                    <!-- Options for "Waiting for Retrieval" -->
+                    <option value="1" {% if record.item_status == 1 %}selected{% endif %}>Waiting for Retrieval</option>
+                    <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
+                {% elif record.item_status == 3 %}
+                    <!-- Options for "Waiting for Reselling" -->
+                    <option value="3" {% if record.item_status == 3 %}selected{% endif %}>Waiting for Reselling</option>
+                    <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
+                {% else %}
+                    <!-- Default options -->
+                    <option value="0" {% if record.item_status == 0 %}selected{% endif %}>In Pawnshop</option>
+                    <option value="1" {% if record.item_status == 1 %}selected{% endif %}>Waiting for Retrieval</option>
+                    <option value="2" {% if record.item_status == 2 %}selected{% endif %}>Retrieved</option>
+                    <option value="3" {% if record.item_status == 3 %}selected{% endif %}>Waiting for Reselling</option>
+                    <option value="4" {% if record.item_status == 4 %}selected{% endif %}>Resold</option>
+                    <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
+                {% endif %}
             </select>
         </div>
+        
 
 
         <div class="form-group text-center flex gap-4 justify-center">

@@ -2,33 +2,33 @@
 
 {% block content %}
 <div class="container mx-auto">
-    <h1 class="text-3xl mb-4">Edit Record</h1>
+    <h1 class="text-5xl mb-4 text-center text-primary-content">Edit Record</h1>
 
     <!-- Status Section -->
-    <div class="status-section mb-6 p-4 bg-gray-100 rounded-lg shadow-md">
-        <h2 class="text-xl font-bold mb-2">Record Status</h2>
+    <div class="status-section mb-6 p-4 bg-accent rounded-lg shadow-md">
+        <h2 class="text-xl font-bold py-2">Record Status</h2>
         <p>
             <strong>Is Active:</strong> 
-            <span class="{% if record.active %}text-green-600{% else %}text-red-600{% endif %}">
+            <span class="{% if record.active %}text-success{% else %}text-success{% endif %} py-2">
                 {{ record.active|yesno:"Active,Inactive" }}
             </span>
         </p>
         <p>
             <strong>Item Status:</strong> 
-            <span class="badge {% if record.item_status == 0 %}badge-success{% elif record.item_status == 1 %}badge-warning{% else %}badge-danger{% endif %}">
+            <span class="badge {% if record.item_status == 0 %}badge-success{% elif record.item_status == 1 or record.item_status == 3 %}badge-warning{% else %}badge-danger{% endif %} py-2">
                 {% if record.item_status == 0 %}In Pawnshop{% elif record.item_status == 1 %}Waiting for Retrieval{% elif record.item_status == 2 %}Retrieved{% elif record.item_status == 3 %}Waiting for Reselling{% elif record.item_status == 4 %}Resold{% else %}Lost{% endif %}
             </span>
         </p>
 
         <strong>Overdue Status:</strong>
-        <span class="{% if is_overdue %}text-red-600{% else %}text-green-600{% endif %}">
+        <span class="{% if is_overdue %}text-error{% else %}text-success{% endif %}">
             {% if is_overdue %}Overdue{% else %}On Time{% endif %}
         </span>
         </p>
     </div>
 
     <!-- Form Section -->
-    <form method="POST" class="form bg-white p-6 rounded-lg shadow-lg">
+    <form method="POST" class="form bg-accent p-6 rounded-lg shadow-lg">
         {% csrf_token %}
         {{ form.non_field_errors }}
 
@@ -151,6 +151,40 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
 />
+
+        <!-- Staff -->
+        <div class="form-group mb-4 flex gap-4">
+            <label for="id_staff" class="block  text-white text-lg font-semibold mt-2">Assigned Staff</label>
+            <select name="staff" id="id_staff" class="input input-bordered block bg-neutral w-min rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                {% for staff_member in staff_list %}
+                <option value="{{ staff_member.id }}" {% if staff_member.id == record.staff.id %}selected{% endif %}>
+                    {{ staff_member.get_full_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+        <div class="form-group mb-4 flex gap-4">
+            <label for="id_item_status" class="block  text-white text-lg font-semibold mt-2">Item Status</label>
+            <select name="item_status" id="id_item_status" class="input input-bordered block bg-neutral w-min rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                <option value="0" {% if record.item_status == 0 %}selected{% endif %}>In Pawnshop</option>
+                <option value="1" {% if record.item_status == 1 %}selected{% endif %}>Waiting for Retrieval</option>
+                <option value="2" {% if record.item_status == 2 %}selected{% endif %}>Retrieved</option>
+                <option value="3" {% if record.item_status == 3 %}selected{% endif %}>Waiting for Reselling</option>
+                <option value="4" {% if record.item_status == 4 %}selected{% endif %}>Resold</option>
+                <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
+            </select>
+        </div>
+
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary w-full py-3 rounded-lg text-white font-semibold hover:brightness-50 focus:outline-none focus:ring-2 focus:ring-primary-dark">
+                Save Changes
+            </button>
+        </div>
+    </form>
+
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     flatpickr('#start-date', {
@@ -168,47 +202,6 @@
         disableMobile: 'true',
     });
 </script>
-
-        <!-- Staff -->
-        <div class="form-group mb-4 flex gap-4">
-            <label for="id_staff" class="block  text-white text-lg font-semibold mt-2">Assigned Staff</label>
-            <select name="staff" id="id_staff" class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                {% for staff_member in staff_list %}
-                <option value="{{ staff_member.id }}" {% if staff_member.id == record.staff.id %}selected{% endif %}>
-                    {{ staff_member.get_full_name }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
-
-        <div class="form-group mb-4 flex gap-4">
-            <label for="id_item_status" class="block  text-white text-lg font-semibold mt-2">Item Status</label>
-            <select name="item_status" id="id_item_status" class="input input-bordered block bg-neutral w-full rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                <option value="0" {% if record.item_status == 0 %}selected{% endif %}>In Pawnshop</option>
-                <option value="1" {% if record.item_status == 1 %}selected{% endif %}>Waiting for Retrieval</option>
-                <option value="2" {% if record.item_status == 2 %}selected{% endif %}>Retrieved</option>
-                <option value="3" {% if record.item_status == 3 %}selected{% endif %}>Waiting for Reselling</option>
-                <option value="4" {% if record.item_status == 4 %}selected{% endif %}>Resold</option>
-                <option value="5" {% if record.item_status == 5 %}selected{% endif %}>Lost</option>
-            </select>
-        </div>
-
-
-        <div class="form-group text-center">
-            <button type="submit" class="btn btn-primary w-full py-3 rounded-lg text-white font-semibold bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-primary-dark">
-                Save Changes
-            </button>
-        </div>
-    </form>
-
-    {% if messages %}
-    <div class="alert alert-success mb-6 p-4 rounded-lg bg-success border-l-4 border-green-500 text-green-800">
-        {% for message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-    {% endif %}
 </div>
 
 

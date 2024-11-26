@@ -56,10 +56,20 @@ class EditRecordForm(forms.ModelForm):
         })
     )
 
+    staff = forms.ModelChoiceField(
+        queryset=Profile.objects.filter(
+            role="staff"),
+        required=True,
+        label="Assigned Staff",
+        widget=forms.Select(attrs={
+            'class': 'input input-bordered bg-neutral w-[80vh] rounded-xl-important text-primary border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary',
+        })
+    )
+
     class Meta:
         model = Record
         fields = ['name', 'detail', 'start_date', 'end_date',
-                  'loan_amount', 'interest_rate', 'customer', 'active', 'item_status']
+                  'loan_amount', 'interest_rate', 'customer', 'staff', 'active', 'item_status']
         widgets = {
             'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),

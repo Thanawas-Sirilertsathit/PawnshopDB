@@ -151,16 +151,21 @@
 />
 
         <!-- Staff -->
-        <div class="form-group mb-4 flex gap-4">
-            <label for="id_staff" class="block  text-white text-lg font-semibold mt-2">Assigned Staff</label>
-            <select name="staff" id="id_staff" class="input input-bordered block bg-neutral w-min rounded-xl-important text-primary p-2 border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                {% for staff_member in staff_list %}
-                <option value="{{ staff_member.id }}" {% if staff_member.id == record.staff.id %}selected{% endif %}>
-                    {{ staff_member.get_full_name }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
+<div class="form-group mb-4 flex gap-4">
+    <label
+        for="id_staff"
+        class="block text-white text-lg font-semibold mt-2"
+    >
+        Assigned Staff
+    </label>
+    {{ form.staff }} {% if form.staff.errors %}
+    <div class="text-error text-sm mt-2">
+        {% for error in form.staff.errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
 
 
         <div class="form-group mb-4 flex gap-4">

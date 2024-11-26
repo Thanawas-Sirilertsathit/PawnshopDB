@@ -109,15 +109,45 @@ class RecordIndex(View):
         """Get all records in this pawnshop."""
         pawnshop = get_object_or_404(Pawnshop, pk=pawnshop_id)
         query = request.GET.get('q')
+        status_filter = request.GET.get('s')
+        month_filter = request.GET.get('m')
         active_records = Record.objects.filter(pawnshop=pawnshop)
+
         if query:
             active_records = active_records.filter(
-                Q(name__icontains=query) | Q(detail__icontains=query)
-            )
+                Q(name__icontains=query) |
+                Q(detail__icontains=query) |
+                Q(loanoffer__user__username__icontains=query)
+            ).distinct()
+
+        if status_filter:
+            try:
+                current_status = int(status_filter)
+                if current_status < 0 or current_status > 5:
+                    messages.error(request, "Invalid Status")
+                    return redirect('record_index', pawnshop_id=pawnshop_id)
+                active_records = active_records.filter(item_status=status_filter)
+            except ValueError:
+                messages.error(request, "Invalid Status")
+                return redirect('record_index', pawnshop_id=pawnshop_id)
+
+        if month_filter:
+            try:
+                selected_month = int(month_filter)
+                if selected_month < 1 or selected_month > 12:
+                    messages.error(request, "Invalid Month")
+                    return redirect('record_index', pawnshop_id=pawnshop_id)
+                active_records = [record for record in active_records if record.end_date.month == selected_month]
+            except ValueError:
+                messages.error(request, "Invalid Month")
+                return redirect('record_index', pawnshop_id=pawnshop_id)
+
         context = {
             'pawnshop': pawnshop,
             'records': active_records,
-            'query': query
+            'query': query,
+            'status_filter': status_filter,
+            'month_filter': month_filter,
         }
         return render(request, 'records/record_index.html', context)
 
@@ -135,7 +165,6 @@ class RecordDetail(View):
         overdue = record.is_overdue()
         staff = record.loan_staff()
         customer = record.customer()
-        print(record.item_status)
 
         context = {
             'record': record,

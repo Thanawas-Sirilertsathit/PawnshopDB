@@ -1,3 +1,30 @@
+<style>
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    min-width: 160px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.dropdown-menu li {
+    padding: 8px 12px;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+</style>
+
 {% extends "base.html" %} {% block content %}
 <div class="flex items-center justify-between mb-4">
     <h1 class="text-3xl text-primary-content mb-4">
@@ -26,17 +53,51 @@
         action="{% url 'record_index' pawnshop_id=pawnshop.id%}"
         class="flex items-center space-x-2 max-w-screen"
     >
-        <input
-            type="text"
-            name="q"
-            value="{{ query|default:'' }}"
-            placeholder="Search records"
-            class="input input-bordered bg-neutral text-primary w-full"
-        />
+    <div class="dropdown">
+        <label tabindex="0" class="btn btn-success m-1 hover:brightness-50">Month</label>
+        <ul class="dropdown-content menu p-2 shadow bg-neutral text-primary rounded-box w-min z-10">
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=">All</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=1">January</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=2">February</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=3">March</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=4">April</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=5">May</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=6">June</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=7">July</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=8">August</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=9">September</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=10">October</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=11">November</a></li>
+            <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=12">December</a></li>
+        </ul>
+    </div>
+    <div class="dropdown">
+        <label tabindex="0" class="btn btn-info m-1 hover:brightness-50">Status</label>
+        <ul class="dropdown-content menu p-2 shadow bg-neutral text-primary rounded-box w-min z-10">
+            <li><a href="?q={{ query|default:'' }}&s=&m={{ month_filter|default:'' }}">All</a></li>
+            <li><a href="?q={{ query|default:'' }}&s=0&m={{ month_filter|default:'' }}">Item is in Pawnshop</a></li>
+            <li><a href="?q={{ query|default:'' }}&s=1&m={{ month_filter|default:'' }}">Waiting for retrieval</a></li>
+            <li><a href="?q={{ query|default:'' }}&s=2&m={{ month_filter|default:'' }}">Retrieved</a></li>
+            <li><a href="?q={{ query|default:'' }}&s=3&m={{ month_filter|default:'' }}">Waiting for reselling</a></li>
+            <li><a href="?q={{ query|default:'' }}&s=4&m={{ month_filter|default:'' }}">Resold</a></li>
+            <li><a href="?q={{ query|default:'' }}&s=5&m={{ month_filter|default:'' }}">Lost</a></li>
+        </ul>
+    </div>
+        <label>
+            <input
+                type="text"
+                name="q"
+                value="{{ query|default:'' }}"
+                placeholder="Search records"
+                class="input input-bordered bg-neutral text-primary w-full"
+            />
+        </label>
+        <input type="hidden" name="s" value="{{ status_filter|default:'' }}" />
+        <input type="hidden" name="m" value="{{ month_filter|default:'' }}" />
         <button type="submit" class="btn btn-accent">Search</button>
     </form>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 z-0">
     {% if request.user.profile.role == "staff" %}
     <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
         <div class="card-body text-center">

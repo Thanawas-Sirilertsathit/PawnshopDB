@@ -54,10 +54,8 @@
         class="flex items-center space-x-2 max-w-screen"
     >
     <div class="dropdown">
-    <a class="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Month
-    </a>
-        <ul class="dropdown-menu">
+        <label tabindex="0" class="btn btn-success m-1 hover:brightness-50">Month</label>
+        <ul class="dropdown-content menu p-2 shadow bg-neutral text-primary rounded-box w-min z-10">
             <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=">All</a></li>
             <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=1">January</a></li>
             <li><a href="?q={{ query|default:'' }}&s={{ status_filter|default:'' }}&m=2">February</a></li>
@@ -74,10 +72,8 @@
         </ul>
     </div>
     <div class="dropdown">
-        <a class="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Status
-        </a>
-        <ul class="dropdown-menu">
+        <label tabindex="0" class="btn btn-info m-1 hover:brightness-50">Status</label>
+        <ul class="dropdown-content menu p-2 shadow bg-neutral text-primary rounded-box w-min z-10">
             <li><a href="?q={{ query|default:'' }}&s=&m={{ month_filter|default:'' }}">All</a></li>
             <li><a href="?q={{ query|default:'' }}&s=0&m={{ month_filter|default:'' }}">Item is in Pawnshop</a></li>
             <li><a href="?q={{ query|default:'' }}&s=1&m={{ month_filter|default:'' }}">Waiting for retrieval</a></li>
@@ -101,7 +97,7 @@
         <button type="submit" class="btn btn-accent">Search</button>
     </form>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 z-0">
     {% if request.user.profile.role == "staff" %}
     <div class="card bg-accent shadow-lg p-8 flex items-center justify-center">
         <div class="card-body text-center">

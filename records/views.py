@@ -311,8 +311,10 @@ class EditRecordView(View):
             messages.warning(request, f"You are not the staff of this record.")
             return redirect(request.META.get('HTTP_REFERER', 'index'))
 
+        initial_staff = record.loan_staff()
+        initial_customer = record.customer()
         form = EditRecordForm(instance=record, initial={
-                              'customer': record.customer(), 'staff': record.loan_staff()})
+                              'customer': initial_customer, 'staff': initial_staff})
         return render(request, 'records/edit_record.html', {'form': form, 'record': record})
 
     def post(self, request, pawnshop_id, record_id):
@@ -327,15 +329,23 @@ class EditRecordView(View):
             update_record.user = request.user
             update_record.record = record
             update_record.save()
-            # Get the selected staff from the form
+
+            customer = form.cleaned_data['customer']
             staff = form.cleaned_data['staff']
+
             LoanOffer.objects.update_or_create(
                 record=update_record,
                 is_staff=True,
-                # Update or create with this user
+
                 defaults={'user': staff.user}
             )
 
+            LoanOffer.objects.update_or_create(
+                record=update_record,
+                is_staff=False,
+
+                defaults={'user': customer.user}
+            )
             messages.success(request, "Record update successfully.")
             return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
         return render(request, 'records/edit_record.html', {'form': form, 'record': record})

@@ -69,7 +69,7 @@ class EditRecordForm(forms.ModelForm):
     class Meta:
         model = Record
         fields = ['name', 'detail', 'start_date', 'end_date',
-                  'loan_amount', 'interest_rate', 'customer', 'staff', 'active', 'item_status']
+                  'loan_amount', 'interest_rate', 'customer', 'staff', 'item_status']
         widgets = {
             'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),

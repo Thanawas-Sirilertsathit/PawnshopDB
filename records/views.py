@@ -313,8 +313,9 @@ class EditRecordView(View):
 
         initial_staff = record.loan_staff()
         initial_customer = record.customer()
-        form = EditRecordForm(instance=record, initial={
-                              'customer': initial_customer, 'staff': initial_staff})
+        initial_staff = initial_staff.profile
+        initial_customer = initial_customer.profile
+        form = EditRecordForm(instance=record, initial={'customer': initial_customer, 'staff': initial_staff})
         return render(request, 'records/edit_record.html', {'form': form, 'record': record})
 
     def post(self, request, pawnshop_id, record_id):

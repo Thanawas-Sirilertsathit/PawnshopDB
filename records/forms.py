@@ -48,7 +48,7 @@ class PawnshopForm(forms.ModelForm):
 class EditRecordForm(forms.ModelForm):
     customer = forms.ModelChoiceField(
         queryset=Profile.objects.filter(
-            role="customer").select_related('user'),
+            role="customer"),
         required=True,
         label="Select Customer",
         widget=forms.Select(attrs={

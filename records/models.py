@@ -90,7 +90,7 @@ class Record(models.Model):
         """
         return LoanOffer.objects.filter(record=self, is_staff=True).first().user
 
-    def customer(self) -> list[User]:
+    def customer(self) -> User:
         """Find a customer user of the activity (host excluded).
 
         :return: customer of this loan contract

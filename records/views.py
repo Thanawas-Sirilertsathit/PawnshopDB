@@ -311,7 +311,8 @@ class EditRecordView(View):
             messages.warning(request, f"You are not the staff of this record.")
             return redirect(request.META.get('HTTP_REFERER', 'index'))
 
-        form = EditRecordForm(instance=record)
+        form = EditRecordForm(instance=record, initial={
+                              'customer': record.customer(), 'staff': record.loan_staff()})
         return render(request, 'records/edit_record.html', {'form': form, 'record': record})
 
     def post(self, request, pawnshop_id, record_id):

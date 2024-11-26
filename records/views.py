@@ -326,6 +326,14 @@ class EditRecordView(View):
             update_record.user = request.user
             update_record.record = record
             update_record.save()
+            # Get the selected staff from the form
+            staff = form.cleaned_data['staff']
+            LoanOffer.objects.update_or_create(
+                record=update_record,
+                is_staff=True,
+                # Update or create with this user
+                defaults={'user': staff.user}
+            )
 
             messages.success(request, "Record update successfully.")
             return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)

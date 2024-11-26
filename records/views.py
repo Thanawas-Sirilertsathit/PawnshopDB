@@ -2,7 +2,7 @@ from django.views import View
 from .models import Record, Pawnshop, Profile, LoanOffer, Payment, Resell
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from .forms import PawnshopForm, RecordForm
+from .forms import PawnshopForm, RecordForm, EditRecordForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -25,7 +25,8 @@ def role_required(role):
                                               f"as you are the {user_profile.role}.")
                     return redirect(request.META.get('HTTP_REFERER', 'index'))
             except Profile.DoesNotExist:
-                messages.error(request, "Profile not found. Please contact support.")
+                messages.error(
+                    request, "Profile not found. Please contact support.")
                 return redirect(request.META.get('HTTP_REFERER', 'index'))
             return view_func(request, *args, **kwargs)
 
@@ -76,9 +77,11 @@ class PawnshopListView(View):
         """Get all pawnshops, with optional search filtering."""
         query = request.GET.get('q')
         if query:
-            pawnshops = Pawnshop.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+            pawnshops = Pawnshop.objects.filter(
+                Q(name__icontains=query) | Q(description__icontains=query))
         else:
             pawnshops = Pawnshop.objects.all()
+        context = {'pawnshops': pawnshops, 'query': query}
         context = {'pawnshops': pawnshops, 'query': query}
         return render(request, 'records/pawnshop_list.html', context)
 
@@ -157,13 +160,18 @@ class RecordDetail(View):
 
     def get(self, request, pawnshop_id, record_id):
         """Get specific record."""
-        record = get_object_or_404(Record, pk=record_id, pawnshop_id=pawnshop_id)
+        record = get_object_or_404(
+            Record, pk=record_id, pawnshop_id=pawnshop_id)
         accrued_interest = record.accrued_interest()
         total_due = record.total_due()
         remaining_loan = record.remaining_loan_amount()
         payments = Payment.objects.filter(record=record)
         overdue = record.is_overdue()
+
+        # Handle loan_staff gracefully
         staff = record.loan_staff()
+        staff_user = staff if staff else "No staff assigned"
+
         customer = record.customer()
 
         context = {
@@ -173,7 +181,7 @@ class RecordDetail(View):
             'remaining_loan': remaining_loan,
             'payments': payments,
             'overdue': overdue,
-            'staff': staff,
+            'staff': staff_user,  # Use the variable that accounts for None
             'customer': customer,
         }
         return render(request, 'records/record_detail.html', context)
@@ -228,7 +236,8 @@ def retrieveItem(request, pawnshop_id, record_id):
     try:
         user_profile = Profile.objects.get(user=request.user)
         if user_profile.role != 'customer' or record.customer() != request.user:
-            messages.warning(request, "You are not the customer of this record.")
+            messages.warning(
+                request, "You are not the customer of this record.")
             return redirect(request.META.get('HTTP_REFERER', 'index'))
     except Profile.DoesNotExist:
         messages.error(request, "Profile not found. Please contact support.")
@@ -255,9 +264,12 @@ def monthly_statistics(request, pawnshop_id):
     if selected_month == 12:
         last_day = date(selected_year + 1, 1, 1) - timedelta(days=1)
     else:
-        last_day = date(selected_year, selected_month + 1, 1) - timedelta(days=1)
-    first_day = timezone.make_aware(datetime.combine(first_day, datetime.min.time()))
-    last_day = timezone.make_aware(datetime.combine(last_day, datetime.min.time()))
+        last_day = date(selected_year, selected_month +
+                        1, 1) - timedelta(days=1)
+    first_day = timezone.make_aware(
+        datetime.combine(first_day, datetime.min.time()))
+    last_day = timezone.make_aware(
+        datetime.combine(last_day, datetime.min.time()))
     records = Record.objects.filter(
         pawnshop=pawnshop,
         start_date__gte=first_day,
@@ -319,6 +331,57 @@ def monthly_statistics(request, pawnshop_id):
     return render(request, 'records/monthly_statistics.html', context)
 
 
+@method_decorator([login_required, role_required("staff")], name="dispatch")
+class EditRecordView(View):
+    """View to edit an existing record for a specific pawnshop."""
+
+    def get(self, request, pawnshop_id, record_id):
+        record = get_object_or_404(Record, pk=record_id)
+        if record.loan_staff() != request.user:
+            messages.warning(request, f"You are not the staff of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+        initial_staff = record.loan_staff()
+        initial_customer = record.customer()
+        initial_staff = initial_staff.profile
+        initial_customer = initial_customer.profile
+        form = EditRecordForm(instance=record, initial={'customer': initial_customer, 'staff': initial_staff})
+        return render(request, 'records/edit_record.html', {'form': form, 'record': record})
+
+    def post(self, request, pawnshop_id, record_id):
+        record = get_object_or_404(Record, pk=record_id)
+        if record.loan_staff() != request.user:
+            messages.warning(request, f"You are not the staff of this record.")
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+        form = EditRecordForm(request.POST, instance=record)
+        if form.is_valid():
+            update_record = form.save(commit=False)
+            update_record.user = request.user
+            update_record.record = record
+            update_record.save()
+
+            customer = form.cleaned_data['customer']
+            staff = form.cleaned_data['staff']
+
+            LoanOffer.objects.update_or_create(
+                record=update_record,
+                is_staff=True,
+
+                defaults={'user': staff.user}
+            )
+
+            LoanOffer.objects.update_or_create(
+                record=update_record,
+                is_staff=False,
+
+                defaults={'user': customer.user}
+            )
+            messages.success(request, "Record update successfully.")
+            return redirect('record_detail', pawnshop_id=pawnshop_id, record_id=record.id)
+        return render(request, 'records/edit_record.html', {'form': form, 'record': record})
+
+
 def yearly_report(request, pawnshop_id):
     """View to display yearly statistics for loans and repayments."""
     year_input = request.GET.get('year', datetime.now().year)
@@ -358,10 +421,13 @@ def yearly_report(request, pawnshop_id):
     for repayment in repayments:
         month = repayment.timestamp.strftime('%Y-%m')
         repayments_by_month[month] += repayment.money
-    months = [datetime(selected_year, i, 1).strftime('%Y-%m') for i in range(1, 13)]
+    months = [datetime(selected_year, i, 1).strftime('%Y-%m')
+              for i in range(1, 13)]
     loan_chart_data = [loans_by_month.get(month, 0) for month in months]
-    repayment_chart_data = [repayments_by_month.get(month, 0) for month in months]
-    months_display = [datetime.strptime(month, '%Y-%m').strftime('%B') for month in months]
+    repayment_chart_data = [
+        repayments_by_month.get(month, 0) for month in months]
+    months_display = [datetime.strptime(
+        month, '%Y-%m').strftime('%B') for month in months]
     selected_year_display = str(selected_year)
 
     context = {

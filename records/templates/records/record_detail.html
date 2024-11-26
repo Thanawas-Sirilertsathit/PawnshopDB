@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} 
+{% block content %}
 <div class="card bg-secondary shadow-lg p-4">
     <div class="card-body">
         <h1 class="text-3xl text-primary-content mt-2">{{ record.name }}</h1>
@@ -56,10 +57,9 @@
 
         <h2 class="text-gray-700 mt-2 text-xl font-bold">Payment History</h2>
         <div class="mt-4 grid grid-cols-3 gap-4">
-            {% if payments %} {% for payment in payments %}
-            <div
-                class="card p-4 mb-4 shadow-lg rounded-xl-important text-gray-700 {% if payment.money > 1000000 %} bg-error {% elif 10000 <= payment.money and payment.money <= 1000000 %} bg-warning {% else %} bg-success {% endif %}"
-            >
+            {% if payments %}
+            {% for payment in payments %}
+            <div class="card p-4 mb-4 shadow-lg rounded-xl-important text-gray-700 {% if payment.money > 1000000 %} bg-error {% elif 10000 <= payment.money and payment.money <= 1000000 %} bg-warning {% else %} bg-success {% endif %}">
                 <p class="text-lg font-semibold">
                     <span class="font-bold">{{ payment.user.username }}</span>
                     - Paid: <span class="font-mono">{{ payment.money }}฿</span>
@@ -92,8 +92,19 @@
                     <a href="{% url 'create_resell' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-error hover:brightness-50"> Resell this item </a>
                 </div>
                 {% endif %}
+            
+                {% if request.user == staff%}
+                <div class="card-actions justify-end my-2">
+                    <a href="{% url 'edit_record' pawnshop_id=record.pawnshop.id record_id=record.id %}" class="btn btn-primary hover:brightness-50">
+                        Edit Record
+                    </a>
+                </div>
+                {% endif %}
+
+            
+                    
             </div>
         </div>
     </div>
-    {% endblock %}
 </div>
+{% endblock %}
